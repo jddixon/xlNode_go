@@ -1,13 +1,13 @@
 package node
 
-// xlattice_go/node/mock_localHost_cluster_test.go
+// xlNode_go/mock_localHost_cluster_test.go
 
 import (
 	"crypto/rsa"
 	"fmt"
 	xi "github.com/jddixon/xlNodeID_go"
-	xo "github.com/jddixon/xlattice_go/overlay"
-	xt "github.com/jddixon/xlattice_go/transport"
+	xo "github.com/jddixon/xlOverlay_go"
+	xt "github.com/jddixon/xlTransport_go"
 	. "gopkg.in/check.v1"
 )
 

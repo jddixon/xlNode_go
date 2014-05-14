@@ -1,9 +1,9 @@
 package node
 
-// xlattice_go/overlay/node.go
+// xlNode_go/gateway.go
 
 import (
-	xo "github.com/jddixon/xlattice_go/overlay"
+	xo "github.com/jddixon/xlOverlay_go"
 )
 
 // This is meant to be a sort of map: the host named can provide

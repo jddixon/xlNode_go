@@ -7,10 +7,10 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
-	xc "github.com/jddixon/xlattice_go/crypto"
+	xr "github.com/jddixon/rnglib_go"
+	xc "github.com/jddixon/xlCrypto_go"
 	xi "github.com/jddixon/xlNodeID_go"
-	"github.com/jddixon/xlattice_go/rnglib"
-	xt "github.com/jddixon/xlattice_go/transport"
+	xt "github.com/jddixon/xlTransport_go"
 	. "gopkg.in/check.v1"
 	"runtime"
 	"strings"
@@ -25,7 +25,7 @@ var (
 	MY_MAX_PROC = 2 // should be OK for test, a 2-core machine
 )
 
-func makeNodeID(rng *rnglib.PRNG) (*xi.NodeID, error) {
+func makeNodeID(rng *xr.PRNG) (*xi.NodeID, error) {
 	var buffer []byte
 	// quasi-random choice, whether to use an SHA1 or SHA3 nodeID
 	if rng.NextBoolean() {
@@ -37,7 +37,7 @@ func makeNodeID(rng *rnglib.PRNG) (*xi.NodeID, error) {
 	return xi.NewNodeID(buffer)
 }
 
-func (s *XLSuite) doKeyTests(c *C, node *Node, rng *rnglib.PRNG) {
+func (s *XLSuite) doKeyTests(c *C, node *Node, rng *xr.PRNG) {
 	// COMMS KEY
 	commsPubKey := node.GetCommsPublicKey()
 	c.Assert(commsPubKey, Not(IsNil)) // NOT
@@ -154,7 +154,7 @@ func (s *XLSuite) TestAutoCreateOverlays(c *C) {
 	was := runtime.GOMAXPROCS(MY_MAX_PROC)
 	fmt.Printf("GOMAXPROCS was %d, has been reset to %d\n", was, MY_MAX_PROC)
 
-	rng := rnglib.MakeSimpleRNG()
+	rng := xr.MakeSimpleRNG()
 	name := rng.NextFileName(4)
 	id, err := makeNodeID(rng)
 	c.Assert(err, Equals, nil)
@@ -184,7 +184,7 @@ func (s *XLSuite) TestAutoCreateOverlays(c *C) {
 
 // Return an initialized and tested host, with a NodeID, commsKey,
 // and sigKey
-func (s *XLSuite) makeHost(c *C, rng *rnglib.PRNG) *Node {
+func (s *XLSuite) makeHost(c *C, rng *xr.PRNG) *Node {
 	// XXX names may not be unique
 	name := rng.NextFileName(6)
 	for {
@@ -248,7 +248,7 @@ func (s *XLSuite) TestNodeSerialization(c *C) {
 	was := runtime.GOMAXPROCS(MY_MAX_PROC)
 	fmt.Printf("GOMAXPROCS was %d, has been reset to %d\n", was, MY_MAX_PROC)
 
-	rng := rnglib.MakeSimpleRNG()
+	rng := xr.MakeSimpleRNG()
 
 	node := s.makeHost(c, rng)
 	s.makeAnEndPoint(c, node)

@@ -1,17 +1,17 @@
 package node
 
-// xlattice_go/node/localHost_test.go
+// xlNode_go/localHost_test.go
 
 import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
+	xr "github.com/jddixon/rnglib_go"
 	xi "github.com/jddixon/xlNodeID_go"
-	xo "github.com/jddixon/xlattice_go/overlay"
-	"github.com/jddixon/xlattice_go/rnglib"
-	xt "github.com/jddixon/xlattice_go/transport"
-	"io/ioutil"
+	xo "github.com/jddixon/xlOverlay_go"
+	xt "github.com/jddixon/xlTransport_go"
 	. "gopkg.in/check.v1"
+	"io/ioutil"
 	"os"
 	"path"
 	"runtime"
@@ -88,7 +88,7 @@ func (s *XLSuite) nodeAsClient(c *C, node *Node, q int, doneCh chan bool) {
 				var err error
 				var count int
 				var cnx xt.ConnectionI
-				rng := rnglib.MakeSimpleRNG()
+				rng := xr.MakeSimpleRNG()
 
 				// open cnx to peer j
 				peer := node.GetPeer(j)

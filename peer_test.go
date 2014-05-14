@@ -1,20 +1,20 @@
 package node
 
-// xlattice_go/node/peer_test.go
+// xlNode_go/peer_test.go
 
 import (
 	"encoding/hex"
 	"fmt"
-	xc "github.com/jddixon/xlattice_go/crypto"
-	xo "github.com/jddixon/xlattice_go/overlay"
-	"github.com/jddixon/xlattice_go/rnglib"
-	xt "github.com/jddixon/xlattice_go/transport"
+	xr "github.com/jddixon/rnglib_go"
+	xc "github.com/jddixon/xlCrypto_go"
+	xo "github.com/jddixon/xlOverlay_go"
+	xt "github.com/jddixon/xlTransport_go"
 	. "gopkg.in/check.v1"
 	"strings"
 )
 
 // available:
-//		func makeNodeID(rng *rnglib.PRNG) *NodeID
+//		func makeNodeID(rng *xr.PRNG) *NodeID
 
 func (s *XLSuite) addAString(slice *[]string, str string) *[]string {
 	*slice = append(*slice, str)
@@ -24,7 +24,7 @@ func (s *XLSuite) TestPeerSerialization(c *C) {
 	if VERBOSITY > 0 {
 		fmt.Println("TEST_PEER_SERIALIZATION")
 	}
-	rng := rnglib.MakeSimpleRNG()
+	rng := xr.MakeSimpleRNG()
 
 	// this is just a lazy way of building a peer
 	name := rng.NextFileName(4)

@@ -1,4 +1,4 @@
-xlattice_go/node/TODO
+xlNode_go/TODO
 
 2013-11-16
     * IDMap should synchronize access internally                        * DONE

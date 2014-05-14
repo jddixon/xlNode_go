@@ -1,11 +1,11 @@
 package node
 
-// xlattice_go/node/baseNodeI.go
+// xlNode_go/baseNodeI.go
 
 import (
 	"crypto/rsa"
 	xi "github.com/jddixon/xlNodeID_go"
-	xo "github.com/jddixon/xlattice_go/overlay"
+	xo "github.com/jddixon/xlOverlay_go"
 )
 
 type BaseNodeI interface {

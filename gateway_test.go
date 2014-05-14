@@ -1,6 +1,6 @@
 package node
 
-// xlattice_go/node/gateway_test.go
+// xlNode_go/gateway_test.go
 
 import (
 	"fmt"

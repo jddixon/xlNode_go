@@ -4,17 +4,17 @@ import (
 	"crypto/rsa"
 	"encoding/hex"
 	"fmt"
+	xr "github.com/jddixon/rnglib_go"
 	xi "github.com/jddixon/xlNodeID_go"
-	xo "github.com/jddixon/xlattice_go/overlay"
-	"github.com/jddixon/xlattice_go/rnglib"
-	xt "github.com/jddixon/xlattice_go/transport"
+	xo "github.com/jddixon/xlOverlay_go"
+	xt "github.com/jddixon/xlTransport_go"
 )
 
 var _ = fmt.Print
 
 func MockLocalHostCluster(K int) (nodes []*Node, accs []*xt.TcpAcceptor) {
 
-	rng := rnglib.MakeSimpleRNG()
+	rng := xr.MakeSimpleRNG()
 
 	// Create K nodes, each with a NodeID, two RSA private keys (sig and
 	// comms), and two RSA public keys.  Each node creates a TcpAcceptor

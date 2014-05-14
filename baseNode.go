@@ -1,15 +1,14 @@
 package node
 
-// xlattice_go/node/baseNode.go
+// xlNode_go/baseNode.go
 
 import (
-	// "code.google.com/p/go.crypto/ssh"
 	"crypto/rsa"
 	"encoding/hex"
 	"fmt"
-	xc "github.com/jddixon/xlattice_go/crypto"
+	xc "github.com/jddixon/xlCrypto_go"
 	xi "github.com/jddixon/xlNodeID_go"
-	xo "github.com/jddixon/xlattice_go/overlay"
+	xo "github.com/jddixon/xlOverlay_go"
 	"strings"
 )
 

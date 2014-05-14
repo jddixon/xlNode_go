@@ -1,10 +1,10 @@
 package node
 
-// xlattice_go/node/cluster_test.go
+// xlNode_go/cluster_test.go
 
 import (
 	"fmt"
-	"github.com/jddixon/xlattice_go/rnglib"
+	xr "github.com/jddixon/rnglib_go"
 	. "gopkg.in/check.v1"
 )
 
@@ -41,7 +41,7 @@ func (s *XLSuite) TestCluster(c *C) {
 	if VERBOSITY > 0 {
 		fmt.Println("TEST_CLUSTER")
 	}
-	rng := rnglib.MakeSimpleRNG()
+	rng := xr.MakeSimpleRNG()
 	_ = rng
 
 	// XXX STUB
