@@ -36,10 +36,10 @@ func (s *XLSuite) TestPeerSerialization(c *C) {
 	c.Assert(err, Equals, nil)
 
 	// harvest its keys
-	ck := &node.commsKey.PublicKey
+	ck := &node.ckPriv.PublicKey
 	ckSSH, err := xc.RSAPubKeyToDisk(ck)
 	c.Assert(err, Equals, nil)
-	sk := &node.sigKey.PublicKey
+	sk := &node.skPriv.PublicKey
 	skSSH, err := xc.RSAPubKeyToDisk(sk)
 	c.Assert(err, Equals, nil)
 

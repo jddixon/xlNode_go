@@ -80,7 +80,7 @@ func (s *XLSuite) doKeyTests(c *C, node *Node, rng *xr.PRNG) {
 	d.Write(msg)
 	hash := d.Sum(nil)
 
-	sig, err := rsa.SignPKCS1v15(rand.Reader, node.sigKey, cr.SHA1, hash)
+	sig, err := rsa.SignPKCS1v15(rand.Reader, node.skPriv, cr.SHA1, hash)
 	c.Assert(err, IsNil)
 
 	signer := node.getSigner()
@@ -182,8 +182,8 @@ func (s *XLSuite) TestAutoCreateOverlays(c *C) {
 
 }
 
-// Return an initialized and tested host, with a NodeID, commsKey,
-// and sigKey
+// Return an initialized and tested host, with a NodeID, ckPriv,
+// and skPriv
 func (s *XLSuite) makeHost(c *C, rng *xr.PRNG) *Node {
 	// XXX names may not be unique
 	name := rng.NextFileName(6)

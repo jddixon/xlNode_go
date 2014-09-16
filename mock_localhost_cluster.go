@@ -59,14 +59,14 @@ func MockLocalHostCluster(K int) (nodes []*Node, accs []*xt.TcpAcceptor) {
 		accEndPoints[i] = accs[i].GetEndPoint().(*xt.TcpEndPoint)
 	}
 
-	commsKeys := make([]*rsa.PublicKey, K)
-	sigKeys := make([]*rsa.PublicKey, K)
+	ckPrivs := make([]*rsa.PublicKey, K)
+	skPrivs := make([]*rsa.PublicKey, K)
 	ctors := make([]*xt.TcpConnector, K)
 
 	for i := 0; i < K; i++ {
 		// we already have nodeIDs
-		commsKeys[i] = nodes[i].GetCommsPublicKey()
-		sigKeys[i] = nodes[i].GetSigPublicKey()
+		ckPrivs[i] = nodes[i].GetCommsPublicKey()
+		skPrivs[i] = nodes[i].GetSigPublicKey()
 		ctors[i], _ = xt.NewTcpConnector(accEndPoints[i])
 	}
 
@@ -75,7 +75,7 @@ func MockLocalHostCluster(K int) (nodes []*Node, accs []*xt.TcpAcceptor) {
 	for i := 0; i < K; i++ {
 		ctorSlice := []xt.ConnectorI{ctors[i]}
 		_ = ctorSlice
-		peers[i], _ = NewPeer(names[i], nodeIDs[i], commsKeys[i], sigKeys[i],
+		peers[i], _ = NewPeer(names[i], nodeIDs[i], ckPrivs[i], skPrivs[i],
 			overlaySlice, ctorSlice)
 	}
 

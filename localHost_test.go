@@ -96,6 +96,9 @@ func (s *XLSuite) nodeAsClient(c *C, node *Node, q int, doneCh chan bool) {
 				// XXX soFar and the sleep handle 'lost connection' errors
 				// Before 2013-09-30 we did 3 soFars and a 1 ms delay, and
 				// sometimes got many lost connections.
+				// NOTE: if you get 'lost connection' errors, consider 
+				// resetting max open files (using ulimit -n VALUE or 
+				// editing /etc/security/limits.conf
 				for soFar := 0; soFar < 3; soFar++ {
 					cnx, err = ctor.Connect(ANY_END_POINT)
 					if err == nil {

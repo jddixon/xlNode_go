@@ -24,8 +24,8 @@ var _ = fmt.Print
 //
 type Node struct {
 	lfs         string
-	commsKey    *rsa.PrivateKey // private
-	sigKey      *rsa.PrivateKey // private
+	ckPriv		*rsa.PrivateKey 
+	skPriv      *rsa.PrivateKey 
 	endPoints   []xt.EndPointI
 	acceptors   []xt.AcceptorI // volatile, do not serialize
 	peers       []Peer
@@ -42,22 +42,22 @@ func NewNew(name string, id *xi.NodeID, lfs string) (*Node, error) {
 
 // XXX Creating a Node with a list of live connections seems nonsensical.
 func New(name string, id *xi.NodeID, lfs string,
-	commsKey, sigKey *rsa.PrivateKey,
+	ckPriv, skPriv *rsa.PrivateKey,
 	o []xo.OverlayI, e []xt.EndPointI, p []Peer) (n *Node, err error) {
 
 	// lfs should be a well-formed POSIX path; if the directory does
 	// not exist we should create it.
 	err = xf.CheckLFS(lfs)
 
-	// The commsKey is an RSA key used to encrypt short messages.
+	// The ckPriv is an RSA key used to encrypt short messages.
 	if err == nil {
-		if commsKey == nil {
-			commsKey, err = rsa.GenerateKey(rand.Reader, 2048)
+		if ckPriv == nil {
+			ckPriv, err = rsa.GenerateKey(rand.Reader, 2048)
 		}
 		if err == nil {
-			// The sigKey is an RSA key used to create digital signatures.
-			if sigKey == nil {
-				sigKey, err = rsa.GenerateKey(rand.Reader, 2048)
+			// The skPriv is an RSA key used to create digital signatures.
+			if skPriv == nil {
+				skPriv, err = rsa.GenerateKey(rand.Reader, 2048)
 			}
 		}
 	}
@@ -114,14 +114,14 @@ func New(name string, id *xi.NodeID, lfs string,
 		}
 	}
 	if err == nil {
-		commsPubKey := &(*commsKey).PublicKey
-		sigPubKey := &(*sigKey).PublicKey
+		commsPubKey := &(*ckPriv).PublicKey
+		sigPubKey := &(*skPriv).PublicKey
 
 		var baseNode *BaseNode
 		baseNode, err = NewBaseNode(name, id, commsPubKey, sigPubKey, overlays)
 		if err == nil {
-			n = &Node{commsKey: commsKey,
-				sigKey:    sigKey,
+			n = &Node{ckPriv: ckPriv,
+				skPriv:    skPriv,
 				acceptors: acceptors,
 				endPoints: endPoints,
 				peers:     peers,
@@ -196,7 +196,7 @@ func addEndPoint(e xt.EndPointI, endPoints *[]xt.EndPointI,
 //
 // XXX would prefer that *DigSigner be returned
 func (n *Node) getSigner() *signer {
-	return newSigner(n.sigKey)
+	return newSigner(n.skPriv)
 }
 
 func (n *Node) AddEndPoint(e xt.EndPointI) (ndx int, err error) {
@@ -217,12 +217,12 @@ func (n *Node) GetEndPoint(x int) xt.EndPointI {
 
 // Returns a pointer to the node's RSA private comms key
 func (n *Node) GetCommsPrivateKey() *rsa.PrivateKey {
-	return n.commsKey
+	return n.ckPriv
 }
 
 // Returns a pointer to the node's RSA private sig key
 func (n *Node) GetSigPrivateKey() *rsa.PrivateKey {
-	return n.sigKey
+	return n.skPriv
 }
 
 // ACCEPTORS ////////////////////////////////////////////////////////
@@ -434,11 +434,11 @@ func (n *Node) Strings() []string {
 	}
 	addStringlet(&ss, fmt.Sprintf("    lfs: %s", n.lfs))
 
-	cPriv, _ := xc.RSAPrivateKeyToDisk(n.commsKey)
-	addStringlet(&ss, "    commsKey: "+string(cPriv))
+	cPriv, _ := xc.RSAPrivateKeyToDisk(n.ckPriv)
+	addStringlet(&ss, "    ckPriv: "+string(cPriv))
 
-	sPriv, _ := xc.RSAPrivateKeyToDisk(n.sigKey)
-	addStringlet(&ss, "    sigKey: "+string(sPriv))
+	sPriv, _ := xc.RSAPrivateKeyToDisk(n.skPriv)
+	addStringlet(&ss, "    skPriv: "+string(sPriv))
 
 	addStringlet(&ss, "    endPoints {")
 	for i := 0; i < len(n.endPoints); i++ {
@@ -510,14 +510,14 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 			err = NotASerializedNode
 		}
 
-		var commsKey, sigKey *rsa.PrivateKey
+		var ckPriv, skPriv *rsa.PrivateKey
 		if err == nil {
 			// move some of this into ExpectRSAPrivateKey() !
 			line = NextNBLine(&rest)
 			parts = strings.Split(line, ": ")
-			if parts[0] == "commsKey" && parts[1] == "-----BEGIN -----" {
-				commsKey, err = ExpectRSAPrivateKey(&rest)
-				node.commsKey = commsKey
+			if parts[0] == "ckPriv" && parts[1] == "-----BEGIN -----" {
+				ckPriv, err = ExpectRSAPrivateKey(&rest)
+				node.ckPriv = ckPriv
 			} else {
 				fmt.Println("MISSING OR ILL-FORMED COMMS_KEY")
 				err = NotASerializedNode
@@ -528,9 +528,9 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 			// move some of this into ExpectRSAPrivateKey() !
 			line = NextNBLine(&rest)
 			parts = strings.Split(line, ": ")
-			if parts[0] == "sigKey" && parts[1] == "-----BEGIN -----" {
-				sigKey, err = ExpectRSAPrivateKey(&rest)
-				node.sigKey = sigKey
+			if parts[0] == "skPriv" && parts[1] == "-----BEGIN -----" {
+				skPriv, err = ExpectRSAPrivateKey(&rest)
+				node.skPriv = skPriv
 			} else {
 				fmt.Println("MISSING OR ILL-FORMED SIG_KEY")
 				err = NotASerializedNode
@@ -614,7 +614,7 @@ func (n *Node) Sign(chunks [][]byte) (sig []byte, err error) {
 	if chunks == nil {
 		err = NothingToSign
 	} else {
-		s := newSigner(n.sigKey)
+		s := newSigner(n.skPriv)
 		for i := 0; i < len(chunks); i++ {
 			s.digest.Write(chunks[i])
 		}
