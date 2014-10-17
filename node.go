@@ -47,7 +47,7 @@ func New(name string, id *xi.NodeID, lfs string,
 
 	// lfs should be a well-formed POSIX path; if the directory does
 	// not exist we should create it.
-	err = xf.CheckLFS(lfs)
+	err = xf.CheckLFS(lfs, 0700)
 
 	// The ckPriv is an RSA key used to encrypt short messages.
 	if err == nil {
@@ -366,7 +366,7 @@ func (n *Node) setLFS(val string) (err error) {
 	if val == "" {
 		err = NilLFS
 	} else {
-		err = xf.CheckLFS(val)
+		err = xf.CheckLFS(val, 0700)
 	}
 	if err == nil {
 		n.lfs = val

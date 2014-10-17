@@ -1,5 +1,8 @@
 xlNode_go/CHANGES
 
+v0.6.1
+    2014-10-17
+        * change in xlUtil_go/lfs/CheckLFS() interface              SLOC 1536
 v0.6.0
     2014-09-16
         * added version info
