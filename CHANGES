@@ -1,5 +1,10 @@
 xlNode_go/CHANGES
 
+v0.6.2
+    2014-10-18
+        * parsePeerFromStrings() becomes ParsePeerFromStrings()
+        * Peer.collectConnectors() --> Peer.CollectConnectors()
+        * minor corrections to handling of peers                    SLOC 1563
 v0.6.1
     2014-10-17
         * change in xlUtil_go/lfs/CheckLFS() interface              SLOC 1536

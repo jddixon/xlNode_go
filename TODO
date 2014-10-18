@@ -1,5 +1,16 @@
 xlNode_go/TODO
 
+2014-10-17
+    * adding a connector to a peer should automatically add the
+        overlay if it is not already present
+    * NewPeer() needs to be rearranged accordingly (if default overlay
+        for a connector is not present in o parameter, add it; and
+        THEN define baseNode)
+    * implement AddOverlay()
+        - GetOverlay()
+        - SizeOverlays()
+        - test(s)
+
 2013-11-16
     * IDMap should synchronize access internally                        * DONE
     * should return a count (synchronized)                              * DONE

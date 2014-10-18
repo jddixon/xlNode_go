@@ -19,7 +19,6 @@ type Peer struct {
 	connectors []xt.ConnectorI // to reach the peer
 	timeout    int64           // ns from epoch
 	contacted  int64           // last contact from this peer, ns from epoch
-	ndx        int             // order in which added
 	up         bool            // set to false if considered unreachable
 	mu         sync.Mutex
 	BaseNode
@@ -31,7 +30,7 @@ func NewNewPeer(name string, id *xi.NodeID) (*Peer, error) {
 
 func NewPeer(name string, id *xi.NodeID,
 	ck *rsa.PublicKey, sk *rsa.PublicKey,
-	o []xo.OverlayI, c []xt.ConnectorI) (*Peer, error) {
+	o []xo.OverlayI, c []xt.ConnectorI) (p *Peer, err error) {
 
 	baseNode, err := NewBaseNode(name, id, ck, sk, o)
 
@@ -43,11 +42,12 @@ func NewPeer(name string, id *xi.NodeID,
 				ctors = append(ctors, c[i])
 			}
 		}
-		p := Peer{connectors: ctors, BaseNode: *baseNode}
-		return &p, nil // FOO
-	} else {
-		return nil, err
+		p = &Peer{
+			connectors: ctors, 
+			BaseNode: *baseNode,
+		}
 	}
+	return
 }
 
 // CONNECTORS ///////////////////////////////////////////////////////
@@ -66,9 +66,7 @@ func (p *Peer) SizeConnectors() int {
 
 /**
  * Return a Connector, an Address-Protocol pair identifying
- * an Acceptor for the Peer.  Connectors are arranged in order
- * of preference, with the zero-th Connector being the most
- * preferred.
+ * an Acceptor for the Peer.  
  *
  * XXX Could as easily return an EndPoint.
  *
@@ -118,7 +116,7 @@ func (p *Peer) String() string {
 	return strings.Join(p.Strings(), "\n")
 }
 
-func collectConnectors(peer *Peer, ss []string) (rest []string, err error) {
+func CollectConnectors(peer *Peer, ss []string) (rest []string, err error) {
 	rest = ss
 	line := NextNBLine(&rest)
 	if line == "connectors {" {
@@ -152,15 +150,15 @@ func ParsePeer(s string) (peer *Peer, rest []string, err error) {
 	bn, rest, err := ParseBaseNode(s, "peer")
 	if err == nil {
 		peer = &Peer{BaseNode: *bn}
-		rest, err = collectConnectors(peer, rest)
+		rest, err = CollectConnectors(peer, rest)
 	}
 	return
 }
-func parsePeerFromStrings(ss []string) (peer *Peer, rest []string, err error) {
+func ParsePeerFromStrings(ss []string) (peer *Peer, rest []string, err error) {
 	bn, rest, err := ParseBNFromStrings(ss, "peer")
 	if err == nil {
 		peer = &Peer{BaseNode: *bn}
-		rest, err = collectConnectors(peer, rest)
+		rest, err = CollectConnectors(peer, rest)
 	}
 	return
 }

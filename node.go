@@ -1,6 +1,7 @@
 package node
 
 import (
+	"bytes"
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
@@ -242,52 +243,58 @@ func (n *Node) GetAcceptor(x int) (acc xt.AcceptorI) {
 }
 
 // OVERLAYS /////////////////////////////////////////////////////////
-//func (n *Node) AddOverlay(o xo.OverlayI) (ndx int, err error) {
-//	ndx = -1
-//	if o == nil {
-//		err = NilOverlay
-//	} else {
-//		for i := 0; i < len(n.overlays); i++ {
-//			if n.overlays[i].Equal(o) {
-//				ndx = i
-//				break
-//			}
-//		}
-//		if ndx == -1 {
-//			n.overlays = append(n.overlays, o)
-//			ndx = len(n.overlays) - 1
-//		}
-//	}
-//	return
-//}
-//
-//func (n *Node) SizeOverlays() int {
-//	return len(n.overlays)
-//}
-//FOO
-/////** @return how to access the peer (transport, protocol, address) */
-////func (n *Node) GetOverlay(x int) xo.OverlayI {
-////	return n.overlays[x]
-////} // GEEP
+func (n *Node) AddOverlay(o xo.OverlayI) (ndx int, err error) {
+	ndx = -1
+	if o == nil {
+		err = NilOverlay
+	} else {
+		for i := 0; i < len(n.overlays); i++ {
+			if n.overlays[i].Equal(o) {
+				ndx = i
+				break
+			}
+		}
+		if ndx == -1 {
+			n.overlays = append(n.overlays, o)
+			ndx = len(n.overlays) - 1
+		}
+	}
+	return
+}
+
+func (n *Node) SizeOverlays() int {
+	return len(n.overlays)
+}
+
+///** @return how to access the peer (transport, protocol, address) */
+func (n *Node) GetOverlay(x int) xo.OverlayI {
+	return n.overlays[x]
+} 
 
 // PEERS ////////////////////////////////////////////////////////////
 
+// Add a peer to the node's list of peers.  Return either the index of
+// the peer in the resultant peer list or an error.
 func (n *Node) AddPeer(peer *Peer) (ndx int, err error) {
 	ndx = -1
 	if peer == nil {
 		err = NilPeer
 	} else {
 		if n.peers != nil {
+			peerID := peer.GetNodeID().Value()
 			for i := 0; i < len(n.peers); i++ {
-				if n.peers[i].Equal(peer) {
+				otherID := n.peers[i].GetNodeID().Value()
+				if bytes.Equal(peerID, otherID) {
 					ndx = i
 					break
 				}
 			}
 		}
 		if ndx == -1 {
+			// The peer was not already present.  Add it to the map.
 			err = n.peerMap.Insert(peer.GetNodeID().Value(), peer)
 			if err == nil {
+				// add the peer to the list
 				n.peers = append(n.peers, *peer)
 				ndx = len(n.peers) - 1
 			}
@@ -575,7 +582,7 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 						break
 					}
 					var peer *Peer
-					peer, rest, err = parsePeerFromStrings(rest)
+					peer, rest, err = ParsePeerFromStrings(rest)
 					if err != nil {
 						break
 					}
