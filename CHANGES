@@ -1,5 +1,10 @@
 xlNode_go/CHANGES
 
+v0.6.3
+    2014-10-19
+        * dropped redundant overlay-related functions from Node
+            (they are already present in BaseNode)
+        * CollectorConnectors() allows empty list                   SLOC 1560
 v0.6.2
     2014-10-18
         * parsePeerFromStrings() becomes ParsePeerFromStrings()

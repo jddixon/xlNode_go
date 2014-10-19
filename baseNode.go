@@ -71,13 +71,10 @@ func (p *BaseNode) GetSigPublicKey() *rsa.PublicKey {
 }
 
 // OVERLAYS /////////////////////////////////////////////////////////
-//func (p *BaseNode) addOverlayI(o xo.OverlayI) error {
-//	if o == nil {
-//		return NilOverlay
-//	}
-//	p.overlays = append(p.overlays, o)
-//	return nil
-//} // FOO
+
+// Add an overlay to the BaseNode, returing either its non-negative
+// index in the overlay table or an error.  If the overlay is already
+// present, it simply returns its index.
 func (n *BaseNode) AddOverlay(o xo.OverlayI) (ndx int, err error) {
 	ndx = -1
 	if o == nil {
@@ -95,7 +92,7 @@ func (n *BaseNode) AddOverlay(o xo.OverlayI) (ndx int, err error) {
 		}
 	}
 	return
-} // FOO
+}
 
 // Return a count of the number of overlays.
 func (p *BaseNode) SizeOverlays() int {

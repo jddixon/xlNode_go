@@ -43,8 +43,8 @@ func NewPeer(name string, id *xi.NodeID,
 			}
 		}
 		p = &Peer{
-			connectors: ctors, 
-			BaseNode: *baseNode,
+			connectors: ctors,
+			BaseNode:   *baseNode,
 		}
 	}
 	return
@@ -66,7 +66,7 @@ func (p *Peer) SizeConnectors() int {
 
 /**
  * Return a Connector, an Address-Protocol pair identifying
- * an Acceptor for the Peer.  
+ * an Acceptor for the Peer.
  *
  * XXX Could as easily return an EndPoint.
  *
@@ -139,11 +139,8 @@ func CollectConnectors(peer *Peer, ss []string) (rest []string, err error) {
 		if line != "}" {
 			err = NotASerializedPeer
 		}
-	} else {
-		// no connectors, not a very useful peer
-		err = NotASerializedPeer
-		peer = nil
 	}
+	// if there are no connectors, not a very useful peer
 	return
 }
 func ParsePeer(s string) (peer *Peer, rest []string, err error) {

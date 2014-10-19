@@ -25,8 +25,8 @@ var _ = fmt.Print
 //
 type Node struct {
 	lfs         string
-	ckPriv		*rsa.PrivateKey 
-	skPriv      *rsa.PrivateKey 
+	ckPriv      *rsa.PrivateKey
+	skPriv      *rsa.PrivateKey
 	endPoints   []xt.EndPointI
 	acceptors   []xt.AcceptorI // volatile, do not serialize
 	peers       []Peer
@@ -243,33 +243,33 @@ func (n *Node) GetAcceptor(x int) (acc xt.AcceptorI) {
 }
 
 // OVERLAYS /////////////////////////////////////////////////////////
-func (n *Node) AddOverlay(o xo.OverlayI) (ndx int, err error) {
-	ndx = -1
-	if o == nil {
-		err = NilOverlay
-	} else {
-		for i := 0; i < len(n.overlays); i++ {
-			if n.overlays[i].Equal(o) {
-				ndx = i
-				break
-			}
-		}
-		if ndx == -1 {
-			n.overlays = append(n.overlays, o)
-			ndx = len(n.overlays) - 1
-		}
-	}
-	return
-}
-
-func (n *Node) SizeOverlays() int {
-	return len(n.overlays)
-}
-
-///** @return how to access the peer (transport, protocol, address) */
-func (n *Node) GetOverlay(x int) xo.OverlayI {
-	return n.overlays[x]
-} 
+//func (n *Node) AddOverlay(o xo.OverlayI) (ndx int, err error) {
+//	ndx = -1
+//	if o == nil {
+//		err = NilOverlay
+//	} else {
+//		for i := 0; i < len(n.overlays); i++ {
+//			if n.overlays[i].Equal(o) {
+//				ndx = i
+//				break
+//			}
+//		}
+//		if ndx == -1 {
+//			n.overlays = append(n.overlays, o)
+//			ndx = len(n.overlays) - 1
+//		}
+//	}
+//	return
+//}
+//
+//func (n *Node) SizeOverlays() int {
+//	return len(n.overlays)
+//}
+//
+/////** @return how to access the peer (transport, protocol, address) */
+//func (n *Node) GetOverlay(x int) xo.OverlayI {
+//	return n.overlays[x]
+//}
 
 // PEERS ////////////////////////////////////////////////////////////
 
