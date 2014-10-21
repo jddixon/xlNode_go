@@ -135,27 +135,23 @@ func CollectConnectors(peer *Peer, ss []string) (rest []string, err error) {
 				return
 			}
 		}
-		line = NextNBLine(&rest)
-		if line != "}" {
-			err = NotASerializedPeer
-		}
 	}
 	// if there are no connectors, not a very useful peer
 	return
 }
 func ParsePeer(s string) (peer *Peer, rest []string, err error) {
-	bn, rest, err := ParseBaseNode(s, "peer")
-	if err == nil {
-		peer = &Peer{BaseNode: *bn}
-		rest, err = CollectConnectors(peer, rest)
-	}
-	return
+	ss := strings.Split(s, "\n")
+	return ParsePeerFromStrings(ss)
 }
 func ParsePeerFromStrings(ss []string) (peer *Peer, rest []string, err error) {
 	bn, rest, err := ParseBNFromStrings(ss, "peer")
 	if err == nil {
 		peer = &Peer{BaseNode: *bn}
 		rest, err = CollectConnectors(peer, rest)
+		line := NextNBLine(&rest)
+		if line != "}" {
+			err = NotASerializedPeer
+		}
 	}
 	return
 }

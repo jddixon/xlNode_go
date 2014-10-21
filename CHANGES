@@ -1,5 +1,8 @@
 xlNode_go/CHANGES
 
+v0.6.4
+    2014-10-21
+        * corrected deserialization of Peer                         SLOC 1532
 v0.6.3
     2014-10-19
         * dropped redundant overlay-related functions from Node
