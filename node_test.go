@@ -14,7 +14,7 @@ import (
 	. "gopkg.in/check.v1"
 	"runtime"
 	"strings"
-	"time"
+	//"time"
 )
 
 const (
@@ -183,7 +183,7 @@ func (s *XLSuite) TestAutoCreateOverlays(c *C) {
 }
 
 // Return an initialized and tested host, with a NodeID, ckPriv,
-// and skPriv
+// and skPriv.  Run() is not called and so any acceptors are not open.
 func (s *XLSuite) makeHost(c *C, rng *xr.PRNG) *Node {
 	// XXX names may not be unique
 	name := rng.NextFileName(6)
@@ -200,8 +200,8 @@ func (s *XLSuite) makeHost(c *C, rng *xr.PRNG) *Node {
 	c.Assert(id, Not(IsNil))
 
 	lfs := "tmp/" + hex.EncodeToString(id.Value())
-	n, err2 := NewNew(name, id, lfs)
-	c.Assert(err2, IsNil)
+	n, err := NewNew(name, id, lfs)
+	c.Assert(err, IsNil)
 	c.Assert(n, Not(IsNil))
 	c.Assert(name, Equals, n.GetName())
 	actualID := n.GetNodeID()
@@ -212,7 +212,7 @@ func (s *XLSuite) makeHost(c *C, rng *xr.PRNG) *Node {
 	c.Assert(0, Equals, n.SizeConnections())
 	c.Assert(lfs, Equals, n.GetLFS())
 	return n
-} // GEEP
+}
 
 // Create a Peer from information in the Node passed.  Endpoints
 // (and so Overlays) must have already been added to the Node.
@@ -268,6 +268,10 @@ func (s *XLSuite) TestNodeSerialization(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(node.GetLFS(), Equals, currentLFS)
 
+	err = node.Run()
+	c.Assert(err, IsNil)
+	defer node.Close() // any error ignored
+
 	const K = 3
 	peers := make([]*Peer, K)
 
@@ -290,16 +294,22 @@ func (s *XLSuite) TestNodeSerialization(c *C) {
 		c.Assert(p, Not(IsNil))
 		c.Assert(p.Equal(peers[i]), Equals, true)
 	}
-	// we can't deserialize the node - it contains live acceptors!
-	for i := 0; i < node.SizeAcceptors(); i++ {
-		node.GetAcceptor(i).Close()
-	}
+	// closes all acceptors
+	err = node.Close()
+	c.Assert(err, IsNil)
+	c.Assert(node.running, Equals, false)
+
 	// XXX parse succeeds if we sleep 100ms, fails if we sleep 10ms
-	time.Sleep(70 * time.Millisecond)
+	// time.Sleep(70 * time.Millisecond)
 
 	backAgain, rest, err := Parse(serialized)
 	c.Assert(err, IsNil)
 	c.Assert(len(rest), Equals, 0)
+	c.Assert(backAgain.running, Equals, false)
+
+	err = backAgain.Run()
+	c.Assert(err, IsNil)
+	defer backAgain.Close()
 
 	reserialized := backAgain.String()
 	c.Assert(reserialized, Equals, serialized)

@@ -106,7 +106,7 @@ func (s *XLSuite) nodeAsClient(c *C, node *Node, q int, doneCh chan bool) {
 					}
 					time.Sleep(2 * time.Millisecond)
 				}
-				c.Assert(err, Equals, nil)
+				c.Assert(err, Equals, nil) // XXX FAILS XXX
 				c.Assert(cnx, Not(IsNil))
 				defer cnx.Close()
 				tcpCnx := cnx.(*xt.TcpConnection)

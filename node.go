@@ -14,6 +14,7 @@ import (
 	xf "github.com/jddixon/xlUtil_go/lfs"
 	"hash"
 	"strings"
+	"sync"
 )
 
 var _ = fmt.Print
@@ -29,10 +30,12 @@ type Node struct {
 	skPriv      *rsa.PrivateKey
 	endPoints   []xt.EndPointI
 	acceptors   []xt.AcceptorI // volatile, do not serialize
-	peers       []Peer
+	peers       []*Peer
 	connections []xt.ConnectionI // volatile
 	gateways    []Gateway
 	peerMap     *xi.IDMap
+	running     bool
+	mu          sync.Mutex
 	BaseNode    // listed last, but serialize first
 }
 
@@ -44,7 +47,7 @@ func NewNew(name string, id *xi.NodeID, lfs string) (*Node, error) {
 // XXX Creating a Node with a list of live connections seems nonsensical.
 func New(name string, id *xi.NodeID, lfs string,
 	ckPriv, skPriv *rsa.PrivateKey,
-	o []xo.OverlayI, e []xt.EndPointI, p []Peer) (n *Node, err error) {
+	o []xo.OverlayI, e []xt.EndPointI, p []*Peer) (n *Node, err error) {
 
 	// lfs should be a well-formed POSIX path; if the directory does
 	// not exist we should create it.
@@ -82,23 +85,9 @@ func New(name string, id *xi.NodeID, lfs string,
 		acceptors []xt.AcceptorI // each must share index with endPoint
 		overlays  []xo.OverlayI
 		m         *xi.IDMap
-		peers     []Peer // an empty slice
+		peers     []*Peer // an empty slice
 	)
 
-	if err == nil {
-		if o != nil {
-			count := len(o)
-			for i := 0; i < count; i++ {
-				overlays = append(overlays, o[i])
-			}
-		}
-		if e != nil {
-			count := len(e)
-			for i := 0; i < count; i++ {
-				_, err = addEndPoint(e[i], &endPoints, &acceptors, &overlays)
-			}
-		}
-	}
 	if err == nil {
 		m, err = xi.NewNewIDMap()
 	}
@@ -128,9 +117,89 @@ func New(name string, id *xi.NodeID, lfs string,
 				peers:     peers,
 				gateways:  nil,
 				lfs:       lfs,
-				// peerMap:   pmPtr,
-				peerMap:  m,
-				BaseNode: *baseNode}
+				peerMap:   m,
+				BaseNode:  *baseNode}
+			if err == nil {
+				if o != nil {
+					count := len(o)
+					for i := 0; i < count; i++ {
+						overlays = append(overlays, o[i])
+					}
+				}
+				if e != nil {
+					count := len(e)
+					for i := 0; i < count; i++ {
+						// _, err = addEndPoint(e[i], &endPoints, &acceptors, &overlays)
+						_, err = n.AddEndPoint(e[i])
+					}
+				}
+			}
+		}
+	}
+	return
+}
+
+// RUN() ////////////////////////////////////////////////////////////
+
+/**
+ * Do whatever is necessary to transition a Node to the running state;
+ * in particular, open all acceptors.
+ */
+func (n *Node) Run() (err error) {
+
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	if !n.running {
+		// XXX STUB
+		n.running = true
+
+		// OPENING ACCEPTORS GOES HERE
+		count := len(n.endPoints)
+		if count > 0 {
+			for i := 0; err == nil && i < count; i++ {
+				var acc *xt.TcpAcceptor
+				e := n.endPoints[i]
+				// DEBUG
+				fmt.Printf("Run: endPoint %d is %s\n", i, e.String())
+				// END
+				if e.Transport() == "tcp" {
+					// XXX HACK ON ADDRESS
+					strAddr := e.String()[13:]
+					acc, err = xt.NewTcpAcceptor(strAddr)
+					// DEBUG
+					fmt.Printf("Run: acceptor %d is %s\n", i, acc.String())
+					// END
+				}
+				if err == nil {
+					n.acceptors = append(n.acceptors, acc) // XXX ACCEPTORS
+				}
+			}
+		}
+	}
+	return
+}
+
+/**
+ * This is not a graceful shutdown.
+ */
+func (n *Node) Close() (err error) {
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	if n.running {
+		// XXX STUB
+		n.running = false
+
+		// XXX should run down list of connections and close each,
+
+		// XXX STUB
+
+		// then run down list of acceptors and close any that are active
+		if n.acceptors != nil {
+			for i := 0; i < len(n.acceptors) && err == nil; i++ {
+				if n.acceptors[i] != nil {
+					err = n.acceptors[i].Close()
+				}
+			}
 		}
 	}
 	return
@@ -138,15 +207,20 @@ func New(name string, id *xi.NodeID, lfs string,
 
 // ENDPOINTS ////////////////////////////////////////////////////////
 
-// Add an endPoint to a node and open an acceptor.  If a compatible
-// overlay does not exist, add the default for the endPoint.
-func addEndPoint(e xt.EndPointI, endPoints *[]xt.EndPointI,
-	acceptors *[]xt.AcceptorI, overlays *[]xo.OverlayI) (ndx int, err error) {
+/**
+ * Add an endPoint to a node and open an acceptor.  If a compatible
+ * overlay does not exist, add the default for the endPoint.
+ */
+func (n *Node) AddEndPoint(e xt.EndPointI) (ndx int, err error) {
+	if e == nil {
+		return -1, NilEndPoint
+	}
 	ndx = -1
 	foundOverlay := false
-	if len(*overlays) > 0 {
-		for j := 0; j < len(*overlays); j++ {
-			overlay := (*overlays)[j]
+	count := len(n.overlays)
+	if count > 0 {
+		for j := 0; j < count; j++ {
+			overlay := (n.overlays)[j]
 			if overlay.IsElement(e) {
 				foundOverlay = true
 				break
@@ -161,32 +235,11 @@ func addEndPoint(e xt.EndPointI, endPoints *[]xt.EndPointI,
 			return
 		}
 		// add it to our collection
-		*overlays = append(*overlays, newO)
-	}
-	var acc *xt.TcpAcceptor
-	if e.Transport() == "tcp" {
-		// XXX HACK ON ADDRESS
-		strAddr := e.String()[13:]
-		acc, err = xt.NewTcpAcceptor(strAddr)
-		if err != nil {
-			return
-		}
-		e = acc.GetEndPoint()
-
-		if *endPoints != nil {
-			for i := 0; i < len(*endPoints); i++ {
-				if e.Equal((*endPoints)[i]) {
-					ndx = i
-					acc.Close()
-					break
-				}
-			}
-		}
+		n.overlays = append(n.overlays, newO)
 	}
 	if ndx == -1 {
-		*acceptors = append(*acceptors, acc)
-		*endPoints = append(*endPoints, e)
-		ndx = len(*endPoints) - 1
+		n.endPoints = append(n.endPoints, e)
+		ndx = len(n.endPoints) - 1
 	}
 	return
 }
@@ -198,13 +251,6 @@ func addEndPoint(e xt.EndPointI, endPoints *[]xt.EndPointI,
 // XXX would prefer that *DigSigner be returned
 func (n *Node) getSigner() *signer {
 	return newSigner(n.skPriv)
-}
-
-func (n *Node) AddEndPoint(e xt.EndPointI) (ndx int, err error) {
-	if e == nil {
-		return -1, NilEndPoint
-	}
-	return addEndPoint(e, &n.endPoints, &n.acceptors, &n.overlays)
 }
 
 // Return a count of the number of endPoints the peer can be accessed through
@@ -291,11 +337,11 @@ func (n *Node) AddPeer(peer *Peer) (ndx int, err error) {
 			}
 		}
 		if ndx == -1 {
-			// The peer was not already present.  Add it to the map.
+			// The peer was NOT already present.  Add it to the map.
 			err = n.peerMap.Insert(peer.GetNodeID().Value(), peer)
 			if err == nil {
 				// add the peer to the list
-				n.peers = append(n.peers, *peer)
+				n.peers = append(n.peers, peer)
 				ndx = len(n.peers) - 1
 			}
 		}
@@ -309,7 +355,7 @@ func (n *Node) SizePeers() int {
 }
 func (n *Node) GetPeer(x int) *Peer {
 	// XXX should return copy
-	return &n.peers[x]
+	return n.peers[x]
 }
 
 // Return a pointer to the peer whose NodeID matches ID, or nil if
@@ -379,23 +425,6 @@ func (n *Node) setLFS(val string) (err error) {
 		n.lfs = val
 	}
 	return
-}
-
-// CLOSE ////////////////////////////////////////////////////////////
-
-func (n *Node) Close() {
-	// XXX should run down list of connections and close each,
-
-	// XXX STUB
-
-	// then run down list of endpoints and close any active acceptors.
-	if n.acceptors != nil {
-		for i := 0; i < len(n.acceptors); i++ {
-			if n.acceptors[i] != nil {
-				n.acceptors[i].Close()
-			}
-		}
-	}
 }
 
 // EQUAL ////////////////////////////////////////////////////////////

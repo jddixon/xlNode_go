@@ -1,5 +1,18 @@
 xlNode_go/TODO
 
+2014-11-20
+    * merge Node.addEndPoint() and Node.AddEndPoint()
+    * add Run() which should convert stringified IP addresses into      * DONE
+        live sockets                                                    * DONE
+        - this ripples on, so that we get ClusterMember.Run(), and so
+            Cluster.Run(), ...
+        - need running boolean                                          * DONE
+            * access restricted to a critical section               
+    * investigate node_test.go shouldCreateTcpEndPoint()
+        - why 127.0.0.0 ?
+
+    * localHost_test.go is failing at line 109                          * FIXED
+
 2014-10-17
     * adding a connector to a peer should automatically add the
         overlay if it is not already present
