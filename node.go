@@ -160,14 +160,14 @@ func (n *Node) Run() (err error) {
 				var acc *xt.TcpAcceptor
 				e := n.endPoints[i]
 				// DEBUG
-				fmt.Printf("Run: endPoint %d is %s\n", i, e.String())
+				//fmt.Printf("Run: endPoint %d is %s\n", i, e.String())
 				// END
 				if e.Transport() == "tcp" {
 					// XXX HACK ON ADDRESS
 					strAddr := e.String()[13:]
 					acc, err = xt.NewTcpAcceptor(strAddr)
 					// DEBUG
-					fmt.Printf("Run: acceptor %d is %s\n", i, acc.String())
+					//fmt.Printf("Run: acceptor %d is %s\n", i, acc.String())
 					// END
 				}
 				if err == nil {
@@ -190,7 +190,6 @@ func (n *Node) Close() (err error) {
 		n.running = false
 
 		// XXX should run down list of connections and close each,
-
 		// XXX STUB
 
 		// then run down list of acceptors and close any that are active

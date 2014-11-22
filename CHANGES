@@ -1,6 +1,8 @@
 xlNode_go/CHANGES
 
 v0.7.0
+    2014-11-22
+        * cleanup, silencing debug messages                         SLOC 1559
     2014-11-21
         * add Node.Run() and Node.Close(), with locking             SLOC 1549
 v0.6.4

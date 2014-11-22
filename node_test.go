@@ -46,8 +46,8 @@ func (s *XLSuite) doKeyTests(c *C, node *Node, rng *xr.PRNG) {
 	c.Assert(privCommsKey.Validate(), IsNil)
 
 	expLen := (*privCommsKey.D).BitLen()
-	if VERBOSITY > 0 {
-		fmt.Printf("bit length of private key exponent is %d\n", expLen)
+	if VERBOSITY > 1 {
+		fmt.Printf("bit length of comms private key exponent is %d\n", expLen)
 	}
 	// 2037 seen at least once
 	c.Assert(true, Equals, (2036 <= expLen) && (expLen <= 2048))
@@ -62,12 +62,11 @@ func (s *XLSuite) doKeyTests(c *C, node *Node, rng *xr.PRNG) {
 	c.Assert(privSigKey.Validate(), IsNil)
 
 	expLen = (*privSigKey.D).BitLen()
-	if VERBOSITY > -1 {
-		fmt.Printf("bit length of private key exponent is %d\n", expLen)
+	if VERBOSITY > 1 {
+		fmt.Printf("bit length of sig private key exponent is %d\n", expLen)
 	}
 	// lowest value seen as of 2013-07-16 was 2039
-	// XXX This test on 2038 seen to fail 2013-08-15.
-	c.Assert(true, Equals, (2038 <= expLen) && (expLen <= 2048))
+	c.Assert(true, Equals, (2036 <= expLen) && (expLen <= 2048))
 
 	c.Assert(privSigKey.PublicKey, Equals, *sigPubKey) // FOO
 
@@ -119,11 +118,13 @@ func (s *XLSuite) TestRuntime(c *C) {
 	if VERBOSITY > 0 {
 		fmt.Println("TEST_RUN_TIME")
 	}
-	MY_MAX_PROC = runtime.NumCPU()
-
-	was := runtime.GOMAXPROCS(MY_MAX_PROC)
-	fmt.Printf("GOMAXPROCS was %d, has been reset to %d\n", was, MY_MAX_PROC)
-	fmt.Printf("Number of CPUs: %d\n", runtime.NumCPU())
+	if VERBOSITY > 1 {
+		MY_MAX_PROC = runtime.NumCPU()
+		was := runtime.GOMAXPROCS(MY_MAX_PROC)
+		fmt.Printf("GOMAXPROCS was %d, has been reset to %d\n",
+			was, MY_MAX_PROC)
+		fmt.Printf("Number of CPUs: %d\n", runtime.NumCPU())
+	}
 }
 
 func (s *XLSuite) TestNewConstructor(c *C) {
@@ -152,8 +153,10 @@ func (s *XLSuite) TestAutoCreateOverlays(c *C) {
 	}
 	MY_MAX_PROC = runtime.NumCPU()
 	was := runtime.GOMAXPROCS(MY_MAX_PROC)
-	fmt.Printf("GOMAXPROCS was %d, has been reset to %d\n", was, MY_MAX_PROC)
-
+	if VERBOSITY > 1 {
+		fmt.Printf("GOMAXPROCS was %d, has been reset to %d\n",
+			was, MY_MAX_PROC)
+	}
 	rng := xr.MakeSimpleRNG()
 	name := rng.NextFileName(4)
 	id, err := makeNodeID(rng)
@@ -245,9 +248,11 @@ func (s *XLSuite) TestNodeSerialization(c *C) {
 	if VERBOSITY > 0 {
 		fmt.Println("TEST_NODE_SERIALIZATION")
 	}
-	was := runtime.GOMAXPROCS(MY_MAX_PROC)
-	fmt.Printf("GOMAXPROCS was %d, has been reset to %d\n", was, MY_MAX_PROC)
-
+	if VERBOSITY > 1 {
+		was := runtime.GOMAXPROCS(MY_MAX_PROC)
+		fmt.Printf("GOMAXPROCS was %d, has been reset to %d\n",
+			was, MY_MAX_PROC)
+	}
 	rng := xr.MakeSimpleRNG()
 
 	node := s.makeHost(c, rng)

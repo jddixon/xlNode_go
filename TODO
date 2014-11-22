@@ -1,5 +1,10 @@
 xlNode_go/TODO
 
+2014-11-22 (edited from -21)
+    * this package needs revisiting, especially to confirm that
+        acceptors are working after Run()
+    * 'connection lost' errors need better handling
+
 2014-11-20
     * merge Node.addEndPoint() and Node.AddEndPoint()
     * add Run() which should convert stringified IP addresses into      * DONE

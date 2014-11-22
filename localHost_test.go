@@ -118,6 +118,7 @@ func (s *XLSuite) nodeAsClient(c *C, node *Node, q int, doneCh chan bool) {
 
 				// send msg
 				count, err = tcpCnx.Write(buf)
+				// 2014-11-22 saw "connetion reset by peer"
 				c.Assert(err, IsNil)
 				c.Assert(count, Equals, msgLen)
 
@@ -152,7 +153,10 @@ func (s *XLSuite) TestLocalHostTcpCluster(c *C) {
 	}
 	// XXX EXPERIMENT - I sometimes get panics if == 4 or 5, always if > 5
 	was := runtime.GOMAXPROCS(MY_MAX_PROC)
-	fmt.Printf("GOMAXPROCS was %d, has been reset to %d\n", was, MY_MAX_PROC)
+	if VERBOSITY > 1 {
+		fmt.Printf("GOMAXPROCS was %d, has been reset to %d\n",
+			was, MY_MAX_PROC)
+	}
 	// END EXPERIMENT
 
 	var err error
