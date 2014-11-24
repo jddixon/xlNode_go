@@ -1,5 +1,8 @@
 xlNode_go/TODO
 
+2014-11-23 
+    * clean up HACK on string addresses in Node.Run()
+
 2014-11-22 (edited from -21)
     * this package needs revisiting, especially to confirm that
         acceptors are working after Run()

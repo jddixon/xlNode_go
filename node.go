@@ -139,71 +139,6 @@ func New(name string, id *xi.NodeID, lfs string,
 	return
 }
 
-// RUN() ////////////////////////////////////////////////////////////
-
-/**
- * Do whatever is necessary to transition a Node to the running state;
- * in particular, open all acceptors.
- */
-func (n *Node) Run() (err error) {
-
-	n.mu.Lock()
-	defer n.mu.Unlock()
-	if !n.running {
-		// XXX STUB
-		n.running = true
-
-		// OPENING ACCEPTORS GOES HERE
-		count := len(n.endPoints)
-		if count > 0 {
-			for i := 0; err == nil && i < count; i++ {
-				var acc *xt.TcpAcceptor
-				e := n.endPoints[i]
-				// DEBUG
-				//fmt.Printf("Run: endPoint %d is %s\n", i, e.String())
-				// END
-				if e.Transport() == "tcp" {
-					// XXX HACK ON ADDRESS
-					strAddr := e.String()[13:]
-					acc, err = xt.NewTcpAcceptor(strAddr)
-					// DEBUG
-					//fmt.Printf("Run: acceptor %d is %s\n", i, acc.String())
-					// END
-				}
-				if err == nil {
-					n.acceptors = append(n.acceptors, acc) // XXX ACCEPTORS
-				}
-			}
-		}
-	}
-	return
-}
-
-/**
- * This is not a graceful shutdown.
- */
-func (n *Node) Close() (err error) {
-	n.mu.Lock()
-	defer n.mu.Unlock()
-	if n.running {
-		// XXX STUB
-		n.running = false
-
-		// XXX should run down list of connections and close each,
-		// XXX STUB
-
-		// then run down list of acceptors and close any that are active
-		if n.acceptors != nil {
-			for i := 0; i < len(n.acceptors) && err == nil; i++ {
-				if n.acceptors[i] != nil {
-					err = n.acceptors[i].Close()
-				}
-			}
-		}
-	}
-	return
-}
-
 // ENDPOINTS ////////////////////////////////////////////////////////
 
 /**
@@ -243,15 +178,6 @@ func (n *Node) AddEndPoint(e xt.EndPointI) (ndx int, err error) {
 	return
 }
 
-// Returns an instance of a DigSigner which can be run in a separate
-// goroutine.  This allows the Node to calculate more than one
-// digital signature at the same time.
-//
-// XXX would prefer that *DigSigner be returned
-func (n *Node) getSigner() *signer {
-	return newSigner(n.skPriv)
-}
-
 // Return a count of the number of endPoints the peer can be accessed through
 func (n *Node) SizeEndPoints() int {
 	return len(n.endPoints)
@@ -259,16 +185,6 @@ func (n *Node) SizeEndPoints() int {
 
 func (n *Node) GetEndPoint(x int) xt.EndPointI {
 	return n.endPoints[x]
-}
-
-// Returns a pointer to the node's RSA private comms key
-func (n *Node) GetCommsPrivateKey() *rsa.PrivateKey {
-	return n.ckPriv
-}
-
-// Returns a pointer to the node's RSA private sig key
-func (n *Node) GetSigPrivateKey() *rsa.PrivateKey {
-	return n.skPriv
 }
 
 // ACCEPTORS ////////////////////////////////////////////////////////
@@ -285,6 +201,101 @@ func (n *Node) GetAcceptor(x int) (acc xt.AcceptorI) {
 		acc = n.acceptors[x]
 	}
 	return
+}
+
+// RUN() ////////////////////////////////////////////////////////////
+
+/**
+ * Do whatever is necessary to transition a Node to the running state;
+ * in particular, open all acceptors.
+ */
+func (n *Node) Run() (err error) {
+
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	if !n.running {
+		// XXX STUB
+		n.running = true
+
+		count := len(n.endPoints)
+		if count > 0 {
+			for i := 0; err == nil && i < count; i++ {
+				var acc *xt.TcpAcceptor
+				e := n.endPoints[i]
+				// DEBUG
+				//fmt.Printf("Run: endPoint %d is %s\n", i, e.String())
+				// END
+				if e.Transport() == "tcp" {
+					// XXX HACK ON ADDRESS
+					strAddr := e.String()[13:]
+					unBound := strings.HasSuffix(strAddr, ":0")
+					acc, err = xt.NewTcpAcceptor(strAddr)
+					if err == nil && unBound {
+						// DEBUG
+						//fmt.Printf("BINDING endPoint %d\n", i)
+						// END
+						strAddr = acc.String()[26:]
+						n.endPoints[i], err = xt.NewTcpEndPoint(strAddr)
+					}
+					// DEBUG
+					//fmt.Printf("Run: acceptor %d is %s\n", i, acc.String())
+					//fmt.Printf("Run: endPoint %d is %s\n", 
+					//	i, n.endPoints[i].String())
+					// END
+				}
+				if err == nil {
+					n.acceptors = append(n.acceptors, acc) // XXX ACCEPTORS
+				}
+			}
+		}
+	}
+	return
+}
+
+/**
+ * This is not a graceful shutdown.
+ */
+func (n *Node) Close() (err error) {
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	if n.running {
+		// XXX STUB
+		n.running = false
+
+		// XXX should run down list of connections and close each,
+		// XXX STUB
+
+		// then run down list of acceptors and close any that are active
+		if n.acceptors != nil {
+			for i := 0; i < len(n.acceptors) && err == nil; i++ {
+				if n.acceptors[i] != nil {
+					err = n.acceptors[i].Close()
+				}
+			}
+		}
+	}
+	return
+}
+
+// DIG_SIGNER ///////////////////////////////////////////////////////
+
+// Returns an instance of a DigSigner which can be run in a separate
+// goroutine.  This allows the Node to calculate more than one
+// digital signature at the same time.
+//
+// XXX would prefer that *DigSigner be returned
+func (n *Node) getSigner() *signer {
+	return newSigner(n.skPriv)
+}
+
+// Returns a pointer to the node's RSA private comms key
+func (n *Node) GetCommsPrivateKey() *rsa.PrivateKey {
+	return n.ckPriv
+}
+
+// Returns a pointer to the node's RSA private sig key
+func (n *Node) GetSigPrivateKey() *rsa.PrivateKey {
+	return n.skPriv
 }
 
 // OVERLAYS /////////////////////////////////////////////////////////
