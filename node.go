@@ -209,7 +209,7 @@ func (n *Node) GetAcceptor(x int) (acc xt.AcceptorI) {
  * Do whatever is necessary to transition a Node to the running state;
  * in particular, open all acceptors.
  */
-func (n *Node) Run() (err error) {
+func (n *Node) OpenAcc() (err error) {
 
 	n.mu.Lock()
 	defer n.mu.Unlock()
@@ -223,7 +223,7 @@ func (n *Node) Run() (err error) {
 				var acc *xt.TcpAcceptor
 				e := n.endPoints[i]
 				// DEBUG
-				//fmt.Printf("Run: endPoint %d is %s\n", i, e.String())
+				//fmt.Printf("OpenAcc: endPoint %d is %s\n", i, e.String())
 				// END
 				if e.Transport() == "tcp" {
 					// XXX HACK ON ADDRESS
@@ -238,8 +238,8 @@ func (n *Node) Run() (err error) {
 						n.endPoints[i], err = xt.NewTcpEndPoint(strAddr)
 					}
 					// DEBUG
-					//fmt.Printf("Run: acceptor %d is %s\n", i, acc.String())
-					//fmt.Printf("Run: endPoint %d is %s\n", 
+					//fmt.Printf("OpenAcc: acceptor %d is %s\n", i, acc.String())
+					//fmt.Printf("OpenAcc: endPoint %d is %s\n", 
 					//	i, n.endPoints[i].String())
 					// END
 				}
@@ -255,7 +255,7 @@ func (n *Node) Run() (err error) {
 /**
  * This is not a graceful shutdown.
  */
-func (n *Node) Close() (err error) {
+func (n *Node) CloseAcc() (err error) {
 	n.mu.Lock()
 	defer n.mu.Unlock()
 	if n.running {
@@ -639,6 +639,7 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 
 		}
 		// gateways, but not yet
+		// XXX STUB XXX
 
 		// expect closing brace for node {
 		// XXX we need an expect(&rest)

@@ -39,7 +39,7 @@ func MockLocalHostCluster(K int) (nodes []*Node, accs []*xt.TcpAcceptor) {
 	//	defer func() {
 	//		for i := 0; i < K; i++ {
 	//			if accs[i] != nil {
-	//				accs[i].Close()
+	//				accs[i].CloseAcc()
 	//			}
 	//		}
 	//	}()
@@ -55,7 +55,7 @@ func MockLocalHostCluster(K int) (nodes []*Node, accs []*xt.TcpAcceptor) {
 	for i := 0; i < K; i++ {
 		ep, _ := xt.NewTcpEndPoint("127.0.0.1:0")
 		nodes[i].AddEndPoint(ep)
-		nodes[i].Run() // XXX POSSIBLE ERRORS IGNORED
+		nodes[i].OpenAcc() // XXX POSSIBLE ERRORS IGNORED
 		accs[i] = nodes[i].GetAcceptor(0).(*xt.TcpAcceptor)
 		accEndPoints[i] = accs[i].GetEndPoint().(*xt.TcpEndPoint)
 	}

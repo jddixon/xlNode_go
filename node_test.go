@@ -172,7 +172,7 @@ func (s *XLSuite) TestAutoCreateOverlays(c *C) {
 	n, err := New(name, id, lfs, nil, nil, nil, e, nil)
 	c.Assert(err, Equals, nil)
 	c.Assert(n, Not(Equals), nil)
-	defer n.Close()
+	defer n.CloseAcc()
 
 	c.Assert(n.SizeEndPoints(), Equals, len(e))
 	c.Assert(n.SizeOverlays(), Equals, 1)
@@ -180,13 +180,13 @@ func (s *XLSuite) TestAutoCreateOverlays(c *C) {
 	// expect to find an acceptor for each endpoint
 	// XXX STUB XXX
 
-	// Close must close all three acceptors
+	// CloseAcc must close all three acceptors
 	// XXX STUB XXX
 
 }
 
 // Return an initialized and tested host, with a NodeID, ckPriv,
-// and skPriv.  Run() is not called and so any acceptors are not open.
+// and skPriv.  OpenAcc() is not called and so any acceptors are not open.
 func (s *XLSuite) makeHost(c *C, rng *xr.PRNG) *Node {
 	// XXX names may not be unique
 	name := rng.NextFileName(6)
@@ -273,9 +273,9 @@ func (s *XLSuite) TestNodeSerialization(c *C) {
 	c.Assert(err, IsNil)
 	c.Assert(node.GetLFS(), Equals, currentLFS)
 
-	err = node.Run()
+	err = node.OpenAcc()
 	c.Assert(err, IsNil)
-	defer node.Close() // any error ignored
+	defer node.CloseAcc() // any error ignored
 
 	const K = 3
 	peers := make([]*Peer, K)
@@ -300,7 +300,7 @@ func (s *XLSuite) TestNodeSerialization(c *C) {
 		c.Assert(p.Equal(peers[i]), Equals, true)
 	}
 	// closes all acceptors
-	err = node.Close()
+	err = node.CloseAcc()
 	c.Assert(err, IsNil)
 	c.Assert(node.running, Equals, false)
 
@@ -312,9 +312,9 @@ func (s *XLSuite) TestNodeSerialization(c *C) {
 	c.Assert(len(rest), Equals, 0)
 	c.Assert(backAgain.running, Equals, false)
 
-	err = backAgain.Run()
+	err = backAgain.OpenAcc()
 	c.Assert(err, IsNil)
-	defer backAgain.Close()
+	defer backAgain.CloseAcc()
 
 	reserialized := backAgain.String()
 	c.Assert(reserialized, Equals, serialized)

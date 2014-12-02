@@ -1,12 +1,15 @@
 xlNode_go/TODO
 
+2014-12-02
+    * rename Node.Run() OpenAcc() and Node.Close() CloseAcc()           * DONE
+
+2014-12-02 (edited from 11-21, -22)
+    * this package needs revisiting, especially to confirm that
+        acceptors are working after OpenAcc()
+    * "connection lost" errors need better handling
+
 2014-11-23 
     * clean up HACK on string addresses in Node.Run()
-
-2014-11-22 (edited from -21)
-    * this package needs revisiting, especially to confirm that
-        acceptors are working after Run()
-    * 'connection lost' errors need better handling
 
 2014-11-20
     * merge Node.addEndPoint() and Node.AddEndPoint()
