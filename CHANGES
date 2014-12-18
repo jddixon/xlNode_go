@@ -1,5 +1,8 @@
 xlNode_go/CHANGES
 
+v0.8.1
+    2014-12-18
+        * use xlUtil_go SHA-related constants                       SLOC 1563
 v0.8.0
     2014-12-02
         * rename Run()/Close() to OpenAcc()/CloseAcc()              SLOC 1565

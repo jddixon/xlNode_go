@@ -1,6 +1,6 @@
 # xlNode_go
 
-The Node componenet library for xlattice_go.
+The Node component library for xlattice_go.
 
 ## On-line Documentation
 

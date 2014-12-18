@@ -8,6 +8,7 @@ import (
 	xi "github.com/jddixon/xlNodeID_go"
 	xo "github.com/jddixon/xlOverlay_go"
 	xt "github.com/jddixon/xlTransport_go"
+	xu "github.com/jddixon/xlUtil_go"
 )
 
 var _ = fmt.Print
@@ -24,7 +25,7 @@ func MockLocalHostCluster(K int) (nodes []*Node, accs []*xt.TcpAcceptor) {
 	for i := 0; i < K; i++ {
 		// TODO: MAKE NAMES UNIQUE
 		names[i] = rng.NextFileName(4)
-		val := make([]byte, xi.SHA1_LEN)
+		val := make([]byte, xu.SHA1_BIN_LEN)
 		rng.NextBytes(val)
 		nodeIDs[i], _ = xi.NewNodeID(val)
 	}

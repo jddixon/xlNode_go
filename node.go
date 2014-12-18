@@ -239,7 +239,7 @@ func (n *Node) OpenAcc() (err error) {
 					}
 					// DEBUG
 					//fmt.Printf("OpenAcc: acceptor %d is %s\n", i, acc.String())
-					//fmt.Printf("OpenAcc: endPoint %d is %s\n", 
+					//fmt.Printf("OpenAcc: endPoint %d is %s\n",
 					//	i, n.endPoints[i].String())
 					// END
 				}

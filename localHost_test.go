@@ -7,9 +7,9 @@ import (
 	"encoding/hex"
 	"fmt"
 	xr "github.com/jddixon/rnglib_go"
-	xi "github.com/jddixon/xlNodeID_go"
 	xo "github.com/jddixon/xlOverlay_go"
 	xt "github.com/jddixon/xlTransport_go"
+	xu "github.com/jddixon/xlUtil_go"
 	. "gopkg.in/check.v1"
 	"io/ioutil"
 	"os"
@@ -126,7 +126,7 @@ func (s *XLSuite) nodeAsClient(c *C, node *Node, q int, doneCh chan bool) {
 				dig := sha1.New()
 				dig.Write(buf)
 				hash := dig.Sum(nil)
-				hashBuf := make([]byte, xi.SHA1_LEN)
+				hashBuf := make([]byte, xu.SHA1_BIN_LEN)
 
 				// wait for reply
 				count, err = tcpCnx.Read(hashBuf)
@@ -134,7 +134,7 @@ func (s *XLSuite) nodeAsClient(c *C, node *Node, q int, doneCh chan bool) {
 				// XXX 2013-09-30 *many* "connection reset by peer"
 				// errors from this point.
 				c.Assert(err, IsNil)
-				c.Assert(count, Equals, xi.SHA1_LEN)
+				c.Assert(count, Equals, xu.SHA1_BIN_LEN)
 
 				// complain if hash differs from reply
 				hashOut := hex.EncodeToString(hash)

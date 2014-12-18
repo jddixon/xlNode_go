@@ -11,6 +11,7 @@ import (
 	xc "github.com/jddixon/xlCrypto_go"
 	xi "github.com/jddixon/xlNodeID_go"
 	xt "github.com/jddixon/xlTransport_go"
+	xu "github.com/jddixon/xlUtil_go"
 	. "gopkg.in/check.v1"
 	"runtime"
 	"strings"
@@ -29,9 +30,9 @@ func makeNodeID(rng *xr.PRNG) (*xi.NodeID, error) {
 	var buffer []byte
 	// quasi-random choice, whether to use an SHA1 or SHA3 nodeID
 	if rng.NextBoolean() {
-		buffer = make([]byte, xi.SHA1_LEN)
+		buffer = make([]byte, xu.SHA1_BIN_LEN)
 	} else {
-		buffer = make([]byte, xi.SHA3_LEN)
+		buffer = make([]byte, xu.SHA3_BIN_LEN)
 	}
 	rng.NextBytes(buffer)
 	return xi.NewNodeID(buffer)
