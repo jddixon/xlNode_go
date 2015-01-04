@@ -1,5 +1,9 @@
 xlNode_go/TODO
 
+2014-12-18
+    * FIX: 'go test' reports a test failure, although the run does 
+        not report any
+
 2014-12-02
     * rename Node.Run() OpenAcc() and Node.Close() CloseAcc()           * DONE
 
