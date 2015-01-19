@@ -1,7 +1,10 @@
-# xlNode_go
+xlNode_go
+=========
 
-The Node component library for xlattice_go.
+The [Node](node.html) component library for xlattice_go.
+
+
 
 ## On-line Documentation
-
-More information on the **xlNode_go** project can be found [here](https://jddixon.github.io/xlNode_go)
+More information on the **xlNode_go** project can be found 
+[here](https://jddixon.github.io/xlNode_go)
