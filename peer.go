@@ -51,7 +51,7 @@ func NewPeer(name string, id *xi.NodeID,
 }
 
 // CONNECTORS ///////////////////////////////////////////////////////
-func (p *Peer) addConnector(c xt.ConnectorI) error {
+func (p *Peer) AddConnector(c xt.ConnectorI) error {
 	if c == nil {
 		return NilConnector
 	}
@@ -130,7 +130,7 @@ func CollectConnectors(peer *Peer, ss []string) (rest []string, err error) {
 			if err != nil {
 				return
 			}
-			err = peer.addConnector(ctor)
+			err = peer.AddConnector(ctor)
 			if err != nil {
 				return
 			}

@@ -1,5 +1,8 @@
 xlNode_go/CHANGES
 
+v0.8.2
+    2015-04-29
+        * Peer.addConnector => AddConnector                         SLOC 1563
 v0.8.1
     2014-12-18
         * use xlUtil_go SHA-related constants                       SLOC 1563
