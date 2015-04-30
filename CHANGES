@@ -1,5 +1,8 @@
 xlNode_go/CHANGES
 
+v0.8.3
+    2015-04-30
+        * add Peer.NewPeerFromNode()                                SLOC 1594
 v0.8.2
     2015-04-29
         * Peer.addConnector => AddConnector                         SLOC 1563

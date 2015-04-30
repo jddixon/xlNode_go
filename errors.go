@@ -10,6 +10,7 @@ var (
 	NilEndPoint        = e.New("nil endPoint argument")
 	NilID              = e.New("nil ID argument")
 	NilLFS             = e.New("nil LFS argument")
+	NilNode            = e.New("nil node argument")
 	NilNodeID          = e.New("nil nodeID argument")
 	NilOverlay         = e.New("nil overlay argument")
 	NilPeer            = e.New("nil peer argument")

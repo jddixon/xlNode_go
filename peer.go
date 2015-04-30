@@ -50,6 +50,38 @@ func NewPeer(name string, id *xi.NodeID,
 	return
 }
 
+// Given a node, construct a Peer with the same properties.
+func NewPeerFromNode(node *Node) (p *Peer, err error) {
+	if node == nil {
+		err = NilNode
+	} else {
+		id := node.GetNodeID().Value()
+		nodeID, err := xi.New(id)
+		if err == nil {
+			var o []xo.OverlayI
+			for i := 0; i < node.SizeOverlays(); i++ {
+				o = append(o, node.GetOverlay(i))
+			}
+			var ctors []xt.ConnectorI
+			for i := 0; i < node.SizeAcceptors(); i++ {
+				var ctor *xt.TcpConnector
+				ep := node.GetAcceptor(i).GetEndPoint()
+				ctor, err = xt.NewTcpConnector(ep)
+				if err != nil {
+					break
+				}
+				ctors = append(ctors, ctor)
+			}
+			if err == nil {
+				p, err = NewPeer(node.GetName(), nodeID,
+					node.GetCommsPublicKey(), node.GetSigPublicKey(),
+					o, ctors)
+			}
+		}
+	}
+	return
+}
+
 // CONNECTORS ///////////////////////////////////////////////////////
 func (p *Peer) AddConnector(c xt.ConnectorI) error {
 	if c == nil {
