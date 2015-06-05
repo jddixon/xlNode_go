@@ -5,6 +5,7 @@ package node
 import (
 	"crypto/rsa"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	xc "github.com/jddixon/xlCrypto_go"
 	xi "github.com/jddixon/xlNodeID_go"
@@ -138,11 +139,11 @@ func (p *BaseNode) Strings() []string {
 		panic("BaseNode.Strings: nil p.commsPubKey !")
 	}
 	// END
-	ckSSH, err := xc.RSAPubKeyToDisk(p.commsPubKey)
+	ckPEM, err := xc.RSAPubKeyToPEM(p.commsPubKey)
 	if err != nil {
 		panic(err)
 	}
-	skSSH, err := xc.RSAPubKeyToDisk(p.sigPubKey)
+	skPEM, err := xc.RSAPubKeyToPEM(p.sigPubKey)
 	if err != nil {
 		panic(err)
 	}
@@ -150,8 +151,8 @@ func (p *BaseNode) Strings() []string {
 	var s []string
 	addStringlet(&s, fmt.Sprintf("name: %s", p.name))
 	addStringlet(&s, fmt.Sprintf("nodeID: %s", p.nodeID.String()))
-	addStringlet(&s, fmt.Sprintf("commsPubKey: %s", ckSSH))
-	addStringlet(&s, fmt.Sprintf("sigPubKey: %s", skSSH))
+	addStringlet(&s, fmt.Sprintf("commsPubKey: %s", ckPEM))
+	addStringlet(&s, fmt.Sprintf("sigPubKey: %s", skPEM))
 	addStringlet(&s, fmt.Sprintf("overlays {"))
 	for i := 0; i < len(p.overlays); i++ {
 		addStringlet(&s, fmt.Sprintf("    %s", p.overlays[i].String()))
@@ -167,18 +168,43 @@ func (p *BaseNode) String() string {
 
 // Return the next non-blank line in the slice of strings, trimmed.
 // This line and any preceding blank lines are removed from the slice.
-func NextNBLine(lines *[]string) string {
+func NextNBLine(lines *[]string) (s string, err error) {
 	if lines != nil {
 		for len(*lines) > 0 {
-			s := strings.TrimSpace((*lines)[0])
+			s = strings.TrimSpace((*lines)[0])
 			*lines = (*lines)[1:]
 			if s != "" {
-				return s
+				return
+			}
+		}
+		err = ExhaustedStringArray
+	}
+	return
+}
+
+func CollectPEMRSAPublicKey(s string, ss *[]string) (what []byte, err error) {
+
+	var x []string
+	x = append(x, s)
+	if x[0] != "-----BEGIN PUBLIC KEY-----" {
+		msg := fmt.Sprintf("PEM public key cannot begin with %s", x[0])
+		err = errors.New(msg)
+	} else {
+		for err == nil {
+			s, err = NextNBLine(ss)
+			if err == nil {
+				x = append(x, s)
+				if s == "-----END PUBLIC KEY-----" {
+					break
+				}
 			}
 		}
 	}
-	return ""
-}
+	if err == nil {
+		what = []byte(strings.Join(x, "\n"))
+	}
+	return
+} // GEEP
 
 // Parse a serialized BaseNode, ignoring blank lines and leading and
 // trailing whitespace.  Expect the first line to be like "TYPE {"
@@ -198,77 +224,104 @@ func ParseBNFromStrings(ss []string, whichType string) (bn *BaseNode, rest []str
 		sigPubKey   *rsa.PublicKey
 		overlays    []xo.OverlayI
 	)
-	s := NextNBLine(&ss)
-	opener := fmt.Sprintf("%s {", whichType) // "peer {" or "node {"
-	if s != opener {
-		err = NotExpectedOpener
-	}
+	s, err := NextNBLine(&ss)
 	if err == nil {
-		s := NextNBLine(&ss)
-		if strings.HasPrefix(s, "name: ") {
-			name = s[6:]
-		} else {
-			err = NotABaseNode
+		opener := fmt.Sprintf("%s {", whichType) // "peer {" or "node {"
+		if s != opener {
+			err = NotExpectedOpener
 		}
 	}
 	if err == nil {
-		s = NextNBLine(&ss)
-		if strings.HasPrefix(s, "nodeID: ") {
-			var val []byte
-			val, err = hex.DecodeString(s[8:])
-			if err == nil {
-				nodeID, err = xi.NewNodeID(val)
+		s, err := NextNBLine(&ss)
+		if err == nil {
+			if strings.HasPrefix(s, "name: ") {
+				name = s[6:]
+			} else {
+				err = NotABaseNode
 			}
-		} else {
-			err = NotABaseNode
 		}
 	}
 	if err == nil {
-		s = NextNBLine(&ss)
-		if strings.HasPrefix(s, "commsPubKey: ") {
-			// XXX we do not verify that the next line is empty
-			ckSSH := []byte(s[13:] + "\n")
-			commsPubKey, err = xc.RSAPubKeyFromDisk(ckSSH)
-		} else {
-			err = NotABaseNode
-		}
-	}
-	if err == nil {
-		s = NextNBLine(&ss)
-		if strings.HasPrefix(s, "sigPubKey: ") {
-			skSSH := []byte(s[11:] + "\n")
-			sigPubKey, err = xc.RSAPubKeyFromDisk(skSSH)
-		} else {
-			err = NotABaseNode
-		}
-	}
-	if err == nil {
-		s = NextNBLine(&ss)
-		if s == "overlays {" {
-			for {
-				s = NextNBLine(&ss)
-				if s == "" { // end of strings
-					err = NotABaseNode
-					break
-				} else if s == "}" {
-					prepend := []string{s}
-					ss = append(prepend, ss...)
-					break
-				}
-				var o xo.OverlayI
-				o, err = xo.Parse(s)
+		s, err = NextNBLine(&ss)
+		if err == nil {
+			if strings.HasPrefix(s, "nodeID: ") {
+				var val []byte
+				val, err = hex.DecodeString(s[8:])
 				if err == nil {
-					overlays = append(overlays, o)
+					nodeID, err = xi.NewNodeID(val)
 				}
+			} else {
+				err = NotABaseNode
 			}
-		} else {
-			err = NotABaseNode
 		}
 	}
 	if err == nil {
-		s = NextNBLine(&ss)
-		if s != "}" {
-			err = NotABaseNode
+		s, err = NextNBLine(&ss)
+		if err == nil {
+			if strings.HasPrefix(s, "commsPubKey: ") {
+				var ckPEM []byte
+				ckPEM, err = CollectPEMRSAPublicKey(s[13:], &ss)
+				if err == nil {
+					commsPubKey, err = xc.RSAPubKeyFromPEM(ckPEM)
+				}
+			} else {
+				// DEBUG
+				fmt.Printf("\ndon't see commsPubKey\n")
+				// END
+				err = NotABaseNode
+			}
+		}
+	}
+	if err == nil {
+		s, err = NextNBLine(&ss)
+		if err == nil {
+			if strings.HasPrefix(s, "sigPubKey: ") {
+				var skPEM []byte
+				skPEM, err = CollectPEMRSAPublicKey(s[11:], &ss)
+				if err == nil {
+					sigPubKey, err = xc.RSAPubKeyFromPEM(skPEM)
+				}
+			} else {
+				// DEBUG
+				fmt.Printf("\ndon't see sigPubKey\n")
+				// END
+				err = NotABaseNode
+			}
+		}
+	}
+	if err == nil {
+		s, err = NextNBLine(&ss)
+		if err == nil {
+			if s == "overlays {" {
+				for {
+					s, err = NextNBLine(&ss)
+					if err == nil {
+						if s == "" { // end of strings
+							err = NotABaseNode
+							break
+						} else if s == "}" {
+							prepend := []string{s}
+							ss = append(prepend, ss...)
+							break
+						}
+					}
+					var o xo.OverlayI
+					o, err = xo.Parse(s)
+					if err == nil {
+						overlays = append(overlays, o)
+					}
+				}
+			} else {
+				err = NotABaseNode
+			}
+		}
+	}
+	if err == nil {
+		s, err = NextNBLine(&ss)
+		if err == nil {
+			if s != "}" {
+				err = NotABaseNode
+			}
 		}
 	}
 	if err == nil {

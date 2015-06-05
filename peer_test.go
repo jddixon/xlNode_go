@@ -37,10 +37,10 @@ func (s *XLSuite) TestPeerSerialization(c *C) {
 
 	// harvest its keys
 	ck := &node.ckPriv.PublicKey
-	ckSSH, err := xc.RSAPubKeyToDisk(ck)
+	ckPEM, err := xc.RSAPubKeyToPEM(ck)
 	c.Assert(err, Equals, nil)
 	sk := &node.skPriv.PublicKey
-	skSSH, err := xc.RSAPubKeyToDisk(sk)
+	skPEM, err := xc.RSAPubKeyToPEM(sk)
 	c.Assert(err, Equals, nil)
 
 	// the other bits necessary
@@ -65,8 +65,8 @@ func (s *XLSuite) TestPeerSerialization(c *C) {
 	s.addAString(&bns, "peer {")
 	s.addAString(&bns, fmt.Sprintf("    name: %s", name))
 	s.addAString(&bns, fmt.Sprintf("    nodeID: %s", nid.String()))
-	s.addAString(&bns, fmt.Sprintf("    commsPubKey: %s", ckSSH))
-	s.addAString(&bns, fmt.Sprintf("    sigPubKey: %s", skSSH))
+	s.addAString(&bns, fmt.Sprintf("    commsPubKey: %s", ckPEM))
+	s.addAString(&bns, fmt.Sprintf("    sigPubKey: %s", skPEM))
 	s.addAString(&bns, fmt.Sprintf("    overlays {"))
 	for i := 0; i < len(oSlice); i++ {
 		s.addAString(&bns, fmt.Sprintf("        %s", oSlice[i].String()))

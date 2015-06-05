@@ -150,21 +150,25 @@ func (p *Peer) String() string {
 
 func CollectConnectors(peer *Peer, ss []string) (rest []string, err error) {
 	rest = ss
-	line := NextNBLine(&rest)
-	if line == "connectors {" {
-		for {
-			line = NextNBLine(&rest)
-			if line == "}" {
-				break
-			}
-			var ctor xt.ConnectorI
-			ctor, err = xt.ParseConnector(line)
-			if err != nil {
-				return
-			}
-			err = peer.AddConnector(ctor)
-			if err != nil {
-				return
+	line, err := NextNBLine(&rest)
+	if err == nil {
+		if line == "connectors {" {
+			for {
+				line, err = NextNBLine(&rest)
+				if err == nil {
+					if line == "}" {
+						break
+					}
+				}
+				var ctor xt.ConnectorI
+				ctor, err = xt.ParseConnector(line)
+				if err != nil {
+					return
+				}
+				err = peer.AddConnector(ctor)
+				if err != nil {
+					return
+				}
 			}
 		}
 	}
@@ -180,9 +184,14 @@ func ParsePeerFromStrings(ss []string) (peer *Peer, rest []string, err error) {
 	if err == nil {
 		peer = &Peer{BaseNode: *bn}
 		rest, err = CollectConnectors(peer, rest)
-		line := NextNBLine(&rest)
-		if line != "}" {
-			err = NotASerializedPeer
+		if err == nil {
+			var line string
+			line, err = NextNBLine(&rest)
+			if err == nil {
+				if line != "}" {
+					err = NotASerializedPeer
+				}
+			}
 		}
 	}
 	return
