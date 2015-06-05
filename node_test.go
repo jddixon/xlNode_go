@@ -308,6 +308,10 @@ func (s *XLSuite) TestNodeSerialization(c *C) {
 	// XXX parse succeeds if we sleep 100ms, fails if we sleep 10ms
 	// time.Sleep(70 * time.Millisecond)
 
+	// DEBUG
+	fmt.Printf("SERIALIZED:\n%s\n", serialized)
+	// END
+
 	backAgain, rest, err := Parse(serialized)
 	c.Assert(err, IsNil)
 	c.Assert(len(rest), Equals, 0)

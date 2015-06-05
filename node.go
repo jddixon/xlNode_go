@@ -480,10 +480,10 @@ func (n *Node) Strings() []string {
 	}
 	addStringlet(&ss, fmt.Sprintf("    lfs: %s", n.lfs))
 
-	cPriv, _ := xc.RSAPrivateKeyToDisk(n.ckPriv)
+	cPriv, _ := xc.RSAPrivateKeyToPEM(n.ckPriv)
 	addStringlet(&ss, "    ckPriv: "+string(cPriv))
 
-	sPriv, _ := xc.RSAPrivateKeyToDisk(n.skPriv)
+	sPriv, _ := xc.RSAPrivateKeyToPEM(n.skPriv)
 	addStringlet(&ss, "    skPriv: "+string(sPriv))
 
 	addStringlet(&ss, "    endPoints {")
@@ -527,7 +527,7 @@ func ExpectRSAPrivateKey(rest *[]string) (key *rsa.PrivateKey, err error) {
 	}
 	if err == nil {
 		text := strings.Join(ss, "\n")
-		key, err = xc.RSAPrivateKeyFromDisk([]byte(text))
+		key, err = xc.RSAPrivateKeyFromPEM([]byte(text))
 	}
 	return
 }
@@ -537,6 +537,7 @@ func Parse(s string) (node *Node, rest []string, err error) {
 }
 func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 
+	var line string
 	var m *xi.IDMap
 	bn, rest, err := ParseBNFromStrings(ss, "node")
 	if err == nil {
@@ -547,7 +548,9 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 		}
 	}
 	if err == nil {
-		line := NextNBLine(&rest)
+		line, err = NextNBLine(&rest)
+	}
+	if err == nil {
 		parts := strings.Split(line, ": ")
 		if parts[0] == "lfs" {
 			node.lfs = strings.TrimSpace(parts[1])
@@ -559,36 +562,45 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 		var ckPriv, skPriv *rsa.PrivateKey
 		if err == nil {
 			// move some of this into ExpectRSAPrivateKey() !
-			line = NextNBLine(&rest)
-			parts = strings.Split(line, ": ")
-			if parts[0] == "ckPriv" && parts[1] == "-----BEGIN -----" {
-				ckPriv, err = ExpectRSAPrivateKey(&rest)
-				node.ckPriv = ckPriv
-			} else {
-				fmt.Println("MISSING OR ILL-FORMED COMMS_KEY")
-				err = NotASerializedNode
+			line, err = NextNBLine(&rest)
+			if err == nil {
+				parts = strings.Split(line, ": ")
+				if parts[0] == "ckPriv" && parts[1] == "-----BEGIN -----" {
+					ckPriv, err = ExpectRSAPrivateKey(&rest)
+					node.ckPriv = ckPriv
+				} else {
+					fmt.Println("MISSING OR ILL-FORMED COMMS_KEY")
+					err = NotASerializedNode
+				}
 			}
 		} // FOO
 
 		if err == nil {
 			// move some of this into ExpectRSAPrivateKey() !
-			line = NextNBLine(&rest)
-			parts = strings.Split(line, ": ")
-			if parts[0] == "skPriv" && parts[1] == "-----BEGIN -----" {
-				skPriv, err = ExpectRSAPrivateKey(&rest)
-				node.skPriv = skPriv
-			} else {
-				fmt.Println("MISSING OR ILL-FORMED SIG_KEY")
-				err = NotASerializedNode
+			line, err = NextNBLine(&rest)
+			if err == nil {
+				parts = strings.Split(line, ": ")
+				if parts[0] == "skPriv" && parts[1] == "-----BEGIN -----" {
+					skPriv, err = ExpectRSAPrivateKey(&rest)
+					node.skPriv = skPriv
+				} else {
+					fmt.Println("MISSING OR ILL-FORMED SIG_KEY")
+					err = NotASerializedNode
+				}
 			}
 		} // FOO
 
 		// endPoints
 		if err == nil {
-			line = NextNBLine(&rest)
+			line, err = NextNBLine(&rest)
+		}
+		if err == nil {
 			if line == "endPoints {" {
-				for {
-					line = NextNBLine(&rest)
+				for err == nil {
+					line, err = NextNBLine(&rest)
+					if err != nil {
+						break
+					}
 					if line == "}" {
 						// prepend := []string{line}
 						// rest = append(prepend, rest...)
@@ -613,7 +625,9 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 
 		// peers
 		if err == nil {
-			line = NextNBLine(&rest)
+			line, err = NextNBLine(&rest)
+		}
+		if err == nil {
 			if line == "peers {" {
 				for {
 					line = strings.TrimSpace(rest[0])
@@ -635,7 +649,7 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 				fmt.Printf("    EXPECTED 'peers {', GOT: '%s'\n", line)
 				err = NotASerializedNode
 			}
-			line = NextNBLine(&rest) // discard the ZZZ }
+			line, err = NextNBLine(&rest) // discard the ZZZ }
 
 		}
 		// gateways, but not yet
@@ -644,9 +658,11 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 		// expect closing brace for node {
 		// XXX we need an expect(&rest)
 
-		line = NextNBLine(&rest)
-		if line != "}" {
-			fmt.Printf("extra text at end of node declaration: '%s'\n", line)
+		line, err = NextNBLine(&rest)
+		if err == nil {
+			if line != "}" {
+				fmt.Printf("extra text at end of node declaration: '%s'\n", line)
+			}
 		}
 	}
 	if err != nil {
