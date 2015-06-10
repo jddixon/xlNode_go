@@ -5,7 +5,6 @@ package node
 import (
 	"crypto/rsa"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	xc "github.com/jddixon/xlCrypto_go"
 	xi "github.com/jddixon/xlNodeID_go"
@@ -166,46 +165,6 @@ func (p *BaseNode) String() string {
 
 // DESERIALIZATION //////////////////////////////////////////////////
 
-// Return the next non-blank line in the slice of strings, trimmed.
-// This line and any preceding blank lines are removed from the slice.
-func NextNBLine(lines *[]string) (s string, err error) {
-	if lines != nil {
-		for len(*lines) > 0 {
-			s = strings.TrimSpace((*lines)[0])
-			*lines = (*lines)[1:]
-			if s != "" {
-				return
-			}
-		}
-		err = ExhaustedStringArray
-	}
-	return
-}
-
-func CollectPEMRSAPublicKey(s string, ss *[]string) (what []byte, err error) {
-
-	var x []string
-	x = append(x, s)
-	if x[0] != "-----BEGIN PUBLIC KEY-----" {
-		msg := fmt.Sprintf("PEM public key cannot begin with %s", x[0])
-		err = errors.New(msg)
-	} else {
-		for err == nil {
-			s, err = NextNBLine(ss)
-			if err == nil {
-				x = append(x, s)
-				if s == "-----END PUBLIC KEY-----" {
-					break
-				}
-			}
-		}
-	}
-	if err == nil {
-		what = []byte(strings.Join(x, "\n"))
-	}
-	return
-} // GEEP
-
 // Parse a serialized BaseNode, ignoring blank lines and leading and
 // trailing whitespace.  Expect the first line to be like "TYPE {"
 
@@ -224,7 +183,7 @@ func ParseBNFromStrings(ss []string, whichType string) (bn *BaseNode, rest []str
 		sigPubKey   *rsa.PublicKey
 		overlays    []xo.OverlayI
 	)
-	s, err := NextNBLine(&ss)
+	s, err := xc.NextNBLine(&ss)
 	if err == nil {
 		opener := fmt.Sprintf("%s {", whichType) // "peer {" or "node {"
 		if s != opener {
@@ -232,7 +191,7 @@ func ParseBNFromStrings(ss []string, whichType string) (bn *BaseNode, rest []str
 		}
 	}
 	if err == nil {
-		s, err := NextNBLine(&ss)
+		s, err := xc.NextNBLine(&ss)
 		if err == nil {
 			if strings.HasPrefix(s, "name: ") {
 				name = s[6:]
@@ -242,7 +201,7 @@ func ParseBNFromStrings(ss []string, whichType string) (bn *BaseNode, rest []str
 		}
 	}
 	if err == nil {
-		s, err = NextNBLine(&ss)
+		s, err = xc.NextNBLine(&ss)
 		if err == nil {
 			if strings.HasPrefix(s, "nodeID: ") {
 				var val []byte
@@ -256,11 +215,11 @@ func ParseBNFromStrings(ss []string, whichType string) (bn *BaseNode, rest []str
 		}
 	}
 	if err == nil {
-		s, err = NextNBLine(&ss)
+		s, err = xc.NextNBLine(&ss)
 		if err == nil {
 			if strings.HasPrefix(s, "commsPubKey: ") {
 				var ckPEM []byte
-				ckPEM, err = CollectPEMRSAPublicKey(s[13:], &ss)
+				ckPEM, err = xc.CollectPEMRSAPublicKey(s[13:], &ss)
 				if err == nil {
 					commsPubKey, err = xc.RSAPubKeyFromPEM(ckPEM)
 				}
@@ -273,11 +232,11 @@ func ParseBNFromStrings(ss []string, whichType string) (bn *BaseNode, rest []str
 		}
 	}
 	if err == nil {
-		s, err = NextNBLine(&ss)
+		s, err = xc.NextNBLine(&ss)
 		if err == nil {
 			if strings.HasPrefix(s, "sigPubKey: ") {
 				var skPEM []byte
-				skPEM, err = CollectPEMRSAPublicKey(s[11:], &ss)
+				skPEM, err = xc.CollectPEMRSAPublicKey(s[11:], &ss)
 				if err == nil {
 					sigPubKey, err = xc.RSAPubKeyFromPEM(skPEM)
 				}
@@ -290,11 +249,11 @@ func ParseBNFromStrings(ss []string, whichType string) (bn *BaseNode, rest []str
 		}
 	}
 	if err == nil {
-		s, err = NextNBLine(&ss)
+		s, err = xc.NextNBLine(&ss)
 		if err == nil {
 			if s == "overlays {" {
 				for {
-					s, err = NextNBLine(&ss)
+					s, err = xc.NextNBLine(&ss)
 					if err == nil {
 						if s == "" { // end of strings
 							err = NotABaseNode
@@ -317,7 +276,7 @@ func ParseBNFromStrings(ss []string, whichType string) (bn *BaseNode, rest []str
 		}
 	}
 	if err == nil {
-		s, err = NextNBLine(&ss)
+		s, err = xc.NextNBLine(&ss)
 		if err == nil {
 			if s != "}" {
 				err = NotABaseNode

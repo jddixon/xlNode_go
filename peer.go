@@ -3,6 +3,7 @@ package node
 import (
 	"crypto/rsa"
 	"fmt"
+	xc "github.com/jddixon/xlCrypto_go"
 	xi "github.com/jddixon/xlNodeID_go"
 	xo "github.com/jddixon/xlOverlay_go"
 	xt "github.com/jddixon/xlTransport_go"
@@ -150,11 +151,11 @@ func (p *Peer) String() string {
 
 func CollectConnectors(peer *Peer, ss []string) (rest []string, err error) {
 	rest = ss
-	line, err := NextNBLine(&rest)
+	line, err := xc.NextNBLine(&rest)
 	if err == nil {
 		if line == "connectors {" {
 			for {
-				line, err = NextNBLine(&rest)
+				line, err = xc.NextNBLine(&rest)
 				if err == nil {
 					if line == "}" {
 						break
@@ -186,7 +187,7 @@ func ParsePeerFromStrings(ss []string) (peer *Peer, rest []string, err error) {
 		rest, err = CollectConnectors(peer, rest)
 		if err == nil {
 			var line string
-			line, err = NextNBLine(&rest)
+			line, err = xc.NextNBLine(&rest)
 			if err == nil {
 				if line != "}" {
 					err = NotASerializedPeer
