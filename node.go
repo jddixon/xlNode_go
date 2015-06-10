@@ -548,7 +548,7 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 		}
 	}
 	if err == nil {
-		line, err = NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 	}
 	if err == nil {
 		parts := strings.Split(line, ": ")
@@ -562,7 +562,7 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 		var ckPriv, skPriv *rsa.PrivateKey
 		if err == nil {
 			// move some of this into ExpectRSAPrivateKey() !
-			line, err = NextNBLine(&rest)
+			line, err = xc.NextNBLine(&rest)
 			if err == nil {
 				parts = strings.Split(line, ": ")
 				if parts[0] == "ckPriv" && parts[1] == "-----BEGIN -----" {
@@ -577,7 +577,7 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 
 		if err == nil {
 			// move some of this into ExpectRSAPrivateKey() !
-			line, err = NextNBLine(&rest)
+			line, err = xc.NextNBLine(&rest)
 			if err == nil {
 				parts = strings.Split(line, ": ")
 				if parts[0] == "skPriv" && parts[1] == "-----BEGIN -----" {
@@ -592,12 +592,12 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 
 		// endPoints
 		if err == nil {
-			line, err = NextNBLine(&rest)
+			line, err = xc.NextNBLine(&rest)
 		}
 		if err == nil {
 			if line == "endPoints {" {
 				for err == nil {
-					line, err = NextNBLine(&rest)
+					line, err = xc.NextNBLine(&rest)
 					if err != nil {
 						break
 					}
@@ -625,7 +625,7 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 
 		// peers
 		if err == nil {
-			line, err = NextNBLine(&rest)
+			line, err = xc.NextNBLine(&rest)
 		}
 		if err == nil {
 			if line == "peers {" {
@@ -649,7 +649,7 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 				fmt.Printf("    EXPECTED 'peers {', GOT: '%s'\n", line)
 				err = NotASerializedNode
 			}
-			line, err = NextNBLine(&rest) // discard the ZZZ }
+			line, err = xc.NextNBLine(&rest) // discard the ZZZ }
 
 		}
 		// gateways, but not yet
@@ -658,7 +658,7 @@ func ParseFromStrings(ss []string) (node *Node, rest []string, err error) {
 		// expect closing brace for node {
 		// XXX we need an expect(&rest)
 
-		line, err = NextNBLine(&rest)
+		line, err = xc.NextNBLine(&rest)
 		if err == nil {
 			if line != "}" {
 				fmt.Printf("extra text at end of node declaration: '%s'\n", line)

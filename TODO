@@ -1,5 +1,8 @@
 xlNode_go/TODO
 
+2015-06-10
+    * move CollectPEMRSAPublicKey() and NextNLLine() from baseNode.go
+        to xlCrypto_go
 2014-12-18
     * FIX: 'go test' reports a test failure, although the run does 
         not report any

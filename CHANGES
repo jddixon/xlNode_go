@@ -1,8 +1,12 @@
 xlNode_go/CHANGES
 
+v0.9.1
+    2015-06-10
+        * move NextNBLine, CollectPEMRSAPublicKey to xlCrypto_go    SLOC 1633
 v0.9.0
     2015-06-05
-        * switch to enocding pubkeys in PEM                         SLOC 
+        * switch to enocding pubkeys in PEM                         SLOC 1669
+
 v0.8.3
     2015-04-30
         * add Peer.NewPeerFromNode()                                SLOC 1594
