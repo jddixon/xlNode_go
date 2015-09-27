@@ -1,5 +1,8 @@
 xlNode_go/CHANGES
 
+v0.9.2
+    2015-09-26
+        * improved documentation somewhat                           SLOC 1633
 v0.9.1
     2015-06-10
         * move NextNBLine, CollectPEMRSAPublicKey to xlCrypto_go    SLOC 1633
