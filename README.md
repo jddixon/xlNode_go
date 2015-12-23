@@ -112,4 +112,4 @@ implemented.  All tests succeed.
 ## On-line Documentation
 
 More information on the **xlNode_go** project can be found
-[here](://jddixon.github.io/xlNode_go)
+[here](https://jddixon.github.io/xlNode_go)
