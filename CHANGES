@@ -1,5 +1,8 @@
 xlNode_go/CHANGES
 
+v0.9.5
+    2016-01-24
+        * minor edits, add countem                                  SLOC 1638
 v0.9.4
     2015-12-23
         * fix dead link
@@ -57,5 +60,6 @@ v0.6.0
 v0.5.0
     2014-05-14
         * split from xlattice_go node                               SLOC 1532
+
 
 
