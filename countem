@@ -1,0 +1,9 @@
+cd ~/dev/go/src/github.com/jddixon/xlNode_go
+
+rm -rf tmp/*
+gofmt -w .
+
+pySloc -v -X '\.dat$|^junk|^tmp$\.swp$' $@  \
+    bash:countem                            \
+
+
