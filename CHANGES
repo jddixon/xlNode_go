@@ -1,5 +1,11 @@
 xlNode_go/CHANGES
 
+v0.9.7
+    2016-06-05
+        * add .dvcz, bkp2U, other bash scripts                      SLOC 1736
+v0.9.6
+    2016-02-27
+        * update LICENSE                                            SLOC 1638
 v0.9.5
     2016-01-24
         * minor edits, add countem                                  SLOC 1638
@@ -60,6 +66,8 @@ v0.6.0
 v0.5.0
     2014-05-14
         * split from xlattice_go node                               SLOC 1532
+
+
 
 
 
