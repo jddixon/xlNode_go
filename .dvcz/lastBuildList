@@ -1,0 +1,50 @@
+-----BEGIN RSA PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoM2sBgX0ChP2JriXkOxS
+e2FjHYVzBGkNvgf0vIAa7FFYZi2pWmxBAVXgl3tTiB3quqqud/MbKqdejM6gkKBK
+v8f7hlcBQLD6BLIZ/RRfhIElc+WlDVfKSnBTB4va5qTQAgvuq5i8+oMj7G8WEy5d
+7cYucWyUJMtHvT4pCDtBWeeqQ62tByWjv34Ud/+A9Mjf0leiWxM3tiToVsqIKb4s
+zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
+H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
+GQIDAQAB
+-----END RSA PUBLIC KEY-----
+xlNode_go v0.9.7
+2016-06-05 21:06:24
+# START CONTENT #
+xlNode_go
+ .copyright 803f3e50518123ef8a08d34f2238e89b62d0c9a2
+ .dvcz
+  projCfg c26d8f8d0f43fa542aa4059fdc4bf5b46dd0e638
+  projCfg.local 66c8a47fc0400d9157df61523f3b063e25d94a23
+  version 5c262ebc8a6f19d213a4cb464a26c7cca7e6ec46
+ .gitignore 5bc9125c59fa06a9719d8433ad1fa35fc62e5d4f
+ .gitignore.local 051715275742521752e27ad1e1402dbc11b786b8
+ CHANGES ad7fafd725885dea29131a2612d55cd6e66efc1a
+ LICENSE.md d1cecfadc47b23486f6bc8a863cfdde348c3eb46
+ README.md e53b78ce6656809dff6596b1093ce657b95d97c9
+ TODO 6b9c1cb9ea1db205fc2ea34cc085197ab1fa9fd6
+ baseNode.go 9f9639a1bacf0f0ee6d8e98039ab9bd9eb49f23b
+ baseNodeI.go 9fc88ed8ff05f59e9e819e7a30ca3632bf687061
+ bkp2U aeb572718699bc67898ffb50f241f1e1a1f03133
+ cluster_test.go dbbf2f3a91ae0da383aa5386ad8df6843a70ebfb
+ const.go 5d16492505e11958138e2af42061d68a04601683
+ countem aaa9c314f4db7e112ba41e443ea661a537ac20b9
+ errors.go ede7042693981e643514ee42f7a4869792485011
+ gateway.go fc16cc53e6f0ff47444b7775c712c86286680291
+ gateway_test.go 38419f5dde501b946e471f5a35b55053d9dcc46b
+ ghpDoc
+  index.md 48824b87d8d58cf5dfdffe6293a4bf4ce6b3d7bd
+ gocheck_test.go 8dc9cff70f175823a6c8bfa4670176c3097ebcbd
+ installit 856c2ecb6ab9646c0cd19ed9252e1597745ee0d1
+ localHost_test.go 04cc37c295ec68e759d8cce1aca96e893e5749ee
+ mock_localhost_cluster.go b33ab8f8ad1d8e239b97b117c313c49bf4c4b8f6
+ mock_localhost_cluster_test.go 52fa0a52a8a405953f28855875b38bc030f79d63
+ node.go 641e63026578b7a93d7a3b3133523f54a5f482e1
+ node_test.go 5f846750dbcbcf6b62ec1988b668f96a04d9cc81
+ peer.go ce0a53695d51df07c06046b11eb9e4be4fcd32fd
+ peer_test.go 86c906319145f7aaf90347e4d1a6544e2c995a74
+ styleit 9d8cfcc75a86c58d4591e3f74b5ee7a24800c53a
+ test.all 991a09585d35a175607b7741fbd88871b2fc1acd
+ version.go e261f51d64c4c1f399466981d8f4288bd388c0a6
+# END CONTENT #
+
+G8thBpPzvz5V4AMVC7VUQPHz28E3hJUU4eC+/eeCaOf+gDSClgzJT9BbnmtdUj532oxABJavS0OMp+RbEEgF0pVBKYm8Ux+3FKdp1TYZWtYroSCw8+QVGdh1NEpWrNcUqcaIJnHzsEfPzSCeKhgSseXnAbzqU7+Gu7uWS7YVbeax3iZaBrmxxkvq4omf7LsEpzVcN/zqnXFNxnMMtq39mqyBQcJJDyoltONllwxjI+S+OfZihb3RDn530iDNa5OwU+TxRkqxPNLg9ZNylOF/2/FAfpRb6KrEk7msqlsyi3Wph4pyvoTY5P5Ug89b/6i8fIl1YPlKx4FLbRrlK2p+ng==
