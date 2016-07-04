@@ -1,6 +1,6 @@
 package node
 
 const (
-	VERSION      = "0.9.7"
-	VERSION_DATE = "2016-06-05"
+	VERSION      = "0.9.8"
+	VERSION_DATE = "2016-07-04"
 )

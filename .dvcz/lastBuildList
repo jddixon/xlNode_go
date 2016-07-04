@@ -7,18 +7,20 @@ zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
 -----END RSA PUBLIC KEY-----
-xlNode_go v0.9.7
-2016-06-05 21:06:24
+xlNode_go v0.9.8
+2016-07-04 16:55:20
 # START CONTENT #
 xlNode_go
  .copyright 803f3e50518123ef8a08d34f2238e89b62d0c9a2
  .dvcz
-  projCfg c26d8f8d0f43fa542aa4059fdc4bf5b46dd0e638
+  builds e5500a82a7855bcfe6200ecce9b539ffa0cd0ace
+  lastBuildList 8823c83ee579ccd18a93f260f976f7af95d509fb
+  projCfg dd10188eb54b61c58146871df19549d0693121db
   projCfg.local 66c8a47fc0400d9157df61523f3b063e25d94a23
-  version 5c262ebc8a6f19d213a4cb464a26c7cca7e6ec46
- .gitignore 5bc9125c59fa06a9719d8433ad1fa35fc62e5d4f
+  version 8095716ff7560916769d563646a5e1e922e8acc0
+ .gitignore af429ab60271ef8943375dc887cbb10d26ee8a7b
  .gitignore.local 051715275742521752e27ad1e1402dbc11b786b8
- CHANGES ad7fafd725885dea29131a2612d55cd6e66efc1a
+ CHANGES ebdb12f5f7dcbc2268c9528656d3133b39a419ef
  LICENSE.md d1cecfadc47b23486f6bc8a863cfdde348c3eb46
  README.md e53b78ce6656809dff6596b1093ce657b95d97c9
  TODO 6b9c1cb9ea1db205fc2ea34cc085197ab1fa9fd6
@@ -32,6 +34,19 @@ xlNode_go
  gateway.go fc16cc53e6f0ff47444b7775c712c86286680291
  gateway_test.go 38419f5dde501b946e471f5a35b55053d9dcc46b
  ghpDoc
+  css
+   LICENSE.html5-boilerplate.md ded771b3245b190da0e81c76de5a80d41392c0a6
+   ghp.css 1d6ebe8a6cf8f61f4645a793cb087dfae2420f33
+   main.css 018ed80b8a6e6607bc7c08595fa5a7fa56853885
+   normalize.css cba40c7ce3d558d00ff79d7505ac3d348015ec9c
+  img
+   GitHub-Mark-32px.png fabe53eb72f9b6d3d47cd95aff31ffc45c2fdbf8
+   chunk.jpg de2b27e41f1547fc14b13399f5906b4303b49657
+   chunk2.jpg d0593d312dbb8ea837c17b28cb639726e29ea93b
+   cluster-with-clients.jpg c167d04c0c6b5736ef9fe4cdc3fcce1956fdea78
+   simple-cluster.jpg 6b223ddd25937c1ef75ef328f36fc3436f10bd62
+   xl-registration.jpg 15cbf951f9db173a45428b32dcec87aca83bbdf0
+   xlattice-2014.jpg f185aaad06db71acd9454f31054c62c56d36f37f
   index.md 48824b87d8d58cf5dfdffe6293a4bf4ce6b3d7bd
  gocheck_test.go 8dc9cff70f175823a6c8bfa4670176c3097ebcbd
  installit 856c2ecb6ab9646c0cd19ed9252e1597745ee0d1
@@ -44,7 +59,7 @@ xlNode_go
  peer_test.go 86c906319145f7aaf90347e4d1a6544e2c995a74
  styleit 9d8cfcc75a86c58d4591e3f74b5ee7a24800c53a
  test.all 991a09585d35a175607b7741fbd88871b2fc1acd
- version.go e261f51d64c4c1f399466981d8f4288bd388c0a6
+ version.go b1944643f4115b68d9b4edd5a2ab06690b132aec
 # END CONTENT #
 
-G8thBpPzvz5V4AMVC7VUQPHz28E3hJUU4eC+/eeCaOf+gDSClgzJT9BbnmtdUj532oxABJavS0OMp+RbEEgF0pVBKYm8Ux+3FKdp1TYZWtYroSCw8+QVGdh1NEpWrNcUqcaIJnHzsEfPzSCeKhgSseXnAbzqU7+Gu7uWS7YVbeax3iZaBrmxxkvq4omf7LsEpzVcN/zqnXFNxnMMtq39mqyBQcJJDyoltONllwxjI+S+OfZihb3RDn530iDNa5OwU+TxRkqxPNLg9ZNylOF/2/FAfpRb6KrEk7msqlsyi3Wph4pyvoTY5P5Ug89b/6i8fIl1YPlKx4FLbRrlK2p+ng==
+jHamYgI9LRCLgLzOZvvIiDM74Tz31Xe3nezJ/5YflkXSt6+tpJccywJ+/kPUbk81+ylnnnpeEeDspjOa+CUNOSYEwYpJX/5ZQ20Nl6uSZb1UrjJyB8xu4xJswUFyeb5Bt7+M4lDa6UocbtkPA9ojw2+q6LqQoCLyCV0IUTsSisAF1BAy11jJ7/ur6GVideLsR3Wg7Uw89oooeOJfQjXB3dGIbedyb3wXrWsvVFVs0zRbSyQsYi7/6xNpHMrRLEP88L0QBK6sHi1WFHEzQGxu0lWD2gqkQZp3r8+ZFHHU48TNO1hqN8wFcYUxGMMdmOrVbclk/EJzoKeEtilM83nygQ==
