@@ -1,5 +1,8 @@
 xlNode_go/CHANGES
 
+v0.9.9
+    2016-09-20
+        * standardize licensing                                     SLOC 2270
 v0.9.8
     2016-07-04
         * add ghpDoc/{css,img}                                      SLOC 2237
@@ -69,6 +72,7 @@ v0.6.0
 v0.5.0
     2014-05-14
         * split from xlattice_go node                               SLOC 1532
+
 
 
 
