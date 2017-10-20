@@ -1,0 +1,23 @@
+# projConfig.toml for xlNode_go
+
+[meta]
+    version = '0.1.0'
+
+[project]
+    name = 'xlNode_go'  # distro name
+    package = 'xlNode_go'  # internal name
+    proj_dir = '/home/jdd/dev/go/src/github.com/jddixon/xlNode_go'
+    main_lang = 'go'
+    version = '0.9.10'
+    version_date = '2017-10-20'
+    author = 'Jim Dixon'
+    author_email = 'jddixon@gmail.com'
+    copyright = '2014-2017'
+    description = 'XLattice Node abstraction for Go'
+    dev_status = 'alpha'
+    license = 'mit'
+    state = 'shared'
+    url = 'https://jddixon.github.io/xlNode_go'
+
+[go]
+    cmds=[]

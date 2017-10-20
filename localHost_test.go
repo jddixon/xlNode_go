@@ -118,7 +118,7 @@ func (s *XLSuite) nodeAsClient(c *C, node *Node, q int, doneCh chan bool) {
 
 				// send msg
 				count, err = tcpCnx.Write(buf)
-				// 2014-11-22 saw "connetion reset by peer"
+				// 2014-11-22 saw "connection reset by peer"
 				c.Assert(err, IsNil)
 				c.Assert(count, Equals, msgLen)
 
