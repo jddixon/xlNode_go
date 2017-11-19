@@ -1,5 +1,11 @@
 xlNode_go/CHANGES
 
+v0.9.11
+    2017-11-19
+        * correct directory structure, config files                 SLOC 2276
+v0.9.10
+    2017-10-20
+        * add projConfig.toml                                       SLOC 2275
 v0.9.9
     2016-09-20
         * standardize licensing                                     SLOC 2270
@@ -72,6 +78,8 @@ v0.6.0
 v0.5.0
     2014-05-14
         * split from xlattice_go node                               SLOC 1532
+
+
 
 
 
