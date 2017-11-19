@@ -8,8 +8,8 @@
     package = 'xlNode_go'  # internal name
     proj_dir = '/home/jdd/dev/go/src/github.com/jddixon/xlNode_go'
     main_lang = 'go'
-    version = '0.9.10'
-    version_date = '2017-10-20'
+    version = '0.9.11'
+    version_date = '2017-11-19'
     author = 'Jim Dixon'
     author_email = 'jddixon@gmail.com'
     copyright = '2014-2017'
